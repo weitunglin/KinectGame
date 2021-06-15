@@ -10,6 +10,7 @@ namespace KinectGame {
     public class BaseObject
     {
         public string Id { get; set; }
+
         public Type Type { get; set; }
 
         public Point Position { get; set; }
