@@ -32,8 +32,7 @@ namespace KinectGame
 
         private Body[] bodies = null;
 
-        //private Objects[] objects = null // initial object memory space
-        //private int objectsNum ;
+        private Game game = null;
 
         public MainWindow()
         {
@@ -62,8 +61,6 @@ namespace KinectGame
                 {
 
                     this.bitmap.Lock();
-                    //object = Game.getObjects();
-                    //objectsNum = Game.getObjectsNum();
                     if (this.frameDescription.Width == this.bitmap.PixelWidth && this.frameDescription.Height == this.bitmap.PixelHeight)
                     {
                         colorFrame.CopyConvertedFrameDataToIntPtr(
@@ -83,105 +80,99 @@ namespace KinectGame
         {
             using (var frame = e.FrameReference.AcquireFrame())
             {
-                if (frame != null)
+                if (frame == null)
                 {
-                    if (this.bodies == null)
-                    {
-                        this.bodies = new Body[frame.BodyCount];
-                    }
-                    frame.GetAndRefreshBodyData(bodies);
+                    return;
+                }
 
-                    Body body = bodies.Where(b => b.IsTracked).FirstOrDefault();
-                    if (body == null)
-                    {
-                        return;
-                    }
-                    List<Point> pos = new List<Point>();
+                if (this.bodies == null)
+                {
+                    this.bodies = new Body[frame.BodyCount];
+                }
 
+                frame.GetAndRefreshBodyData(bodies);
 
-                    //torso
-                    Point head_pos = new Point(body.Joints[JointType.Head].Position.X, body.Joints[JointType.Head].Position.Y);
-                    Point spineshoulder_pos = new Point(body.Joints[JointType.SpineShoulder].Position.X, body.Joints[JointType.SpineShoulder].Position.Y);
-                    Point leftshoulder_pos = new Point(body.Joints[JointType.ShoulderLeft].Position.X, body.Joints[JointType.ShoulderLeft].Position.Y);
-                    Point rightshoulder_pos = new Point(body.Joints[JointType.ShoulderRight].Position.X, body.Joints[JointType.ShoulderRight].Position.Y);
-                    Point lefthip_pos = new Point(body.Joints[JointType.HipLeft].Position.X, body.Joints[JointType.HipLeft].Position.Y);
-                    Point righthip_pos = new Point(body.Joints[JointType.HipRight].Position.X, body.Joints[JointType.HipRight].Position.Y);
+                Body body = bodies.Where(b => b.IsTracked).FirstOrDefault();
+                if (body == null)
+                {
+                    return;
+                }
 
-                    pos.Add(head_pos);
-                    pos.Add(spineshoulder_pos);
-                    pos.Add(leftshoulder_pos);
-                    pos.Add(rightshoulder_pos);
-                    pos.Add(lefthip_pos);
-                    pos.Add(righthip_pos);
+                List<Point> pos = new List<Point>();
 
-                    //right hand
-                    Point righthand_pos = new Point(body.Joints[JointType.HandRight].Position.X, body.Joints[JointType.HandRight].Position.Y);
-                    Point rightelbow_pos = new Point(body.Joints[JointType.ElbowRight].Position.X, body.Joints[JointType.ElbowRight].Position.Y);
-                    Point rightwrist_pos = new Point(body.Joints[JointType.WristRight].Position.X, body.Joints[JointType.WristRight].Position.Y);
+                //torso
+                Point head_pos = new Point(body.Joints[JointType.Head].Position.X, body.Joints[JointType.Head].Position.Y);
+                Point spineshoulder_pos = new Point(body.Joints[JointType.SpineShoulder].Position.X, body.Joints[JointType.SpineShoulder].Position.Y);
+                Point leftshoulder_pos = new Point(body.Joints[JointType.ShoulderLeft].Position.X, body.Joints[JointType.ShoulderLeft].Position.Y);
+                Point rightshoulder_pos = new Point(body.Joints[JointType.ShoulderRight].Position.X, body.Joints[JointType.ShoulderRight].Position.Y);
+                Point lefthip_pos = new Point(body.Joints[JointType.HipLeft].Position.X, body.Joints[JointType.HipLeft].Position.Y);
+                Point righthip_pos = new Point(body.Joints[JointType.HipRight].Position.X, body.Joints[JointType.HipRight].Position.Y);
 
-                    pos.Add(righthand_pos);
-                    pos.Add(rightelbow_pos);
-                    pos.Add(rightwrist_pos);
+                pos.Add(head_pos);
+                pos.Add(spineshoulder_pos);
+                pos.Add(leftshoulder_pos);
+                pos.Add(rightshoulder_pos);
+                pos.Add(lefthip_pos);
+                pos.Add(righthip_pos);
 
-                    //left hand
-                    Point leftthand_pos = new Point(body.Joints[JointType.HandLeft].Position.X, body.Joints[JointType.HandLeft].Position.Y);
-                    Point leftelbow_pos = new Point(body.Joints[JointType.ElbowLeft].Position.X, body.Joints[JointType.ElbowLeft].Position.Y);
-                    Point leftwrist_pos = new Point(body.Joints[JointType.WristLeft].Position.X, body.Joints[JointType.WristLeft].Position.Y);
+                //right hand
+                Point righthand_pos = new Point(body.Joints[JointType.HandRight].Position.X, body.Joints[JointType.HandRight].Position.Y);
+                Point rightelbow_pos = new Point(body.Joints[JointType.ElbowRight].Position.X, body.Joints[JointType.ElbowRight].Position.Y);
+                Point rightwrist_pos = new Point(body.Joints[JointType.WristRight].Position.X, body.Joints[JointType.WristRight].Position.Y);
 
-                    pos.Add(leftthand_pos);
-                    pos.Add(leftelbow_pos);
-                    pos.Add(leftwrist_pos);
+                pos.Add(righthand_pos);
+                pos.Add(rightelbow_pos);
+                pos.Add(rightwrist_pos);
 
+                //left hand
+                Point leftthand_pos = new Point(body.Joints[JointType.HandLeft].Position.X, body.Joints[JointType.HandLeft].Position.Y);
+                Point leftelbow_pos = new Point(body.Joints[JointType.ElbowLeft].Position.X, body.Joints[JointType.ElbowLeft].Position.Y);
+                Point leftwrist_pos = new Point(body.Joints[JointType.WristLeft].Position.X, body.Joints[JointType.WristLeft].Position.Y);
 
-                    //right leg
-                    Point rightknee_pos = new Point(body.Joints[JointType.KneeRight].Position.X, body.Joints[JointType.KneeRight].Position.Y);
-                    Point rightankel_pos = new Point(body.Joints[JointType.AnkleRight].Position.X, body.Joints[JointType.AnkleRight].Position.Y);
-                    Point rightfoot_pos = new Point(body.Joints[JointType.FootRight].Position.X, body.Joints[JointType.FootRight].Position.Y);
-
-                    pos.Add(rightknee_pos);
-                    pos.Add(rightankel_pos);
-                    pos.Add(rightfoot_pos);
-
-                    //left leg
-                    Point leftknee_pos = new Point(body.Joints[JointType.KneeLeft].Position.X, body.Joints[JointType.KneeLeft].Position.Y);
-                    Point leftankel_pos = new Point(body.Joints[JointType.AnkleLeft].Position.X, body.Joints[JointType.AnkleLeft].Position.Y);
-                    Point leftfoot_pos = new Point(body.Joints[JointType.FootLeft].Position.X, body.Joints[JointType.FootLeft].Position.Y);
-
-                    pos.Add(leftknee_pos);
-                    pos.Add(leftankel_pos);
-                    pos.Add(leftfoot_pos);
+                pos.Add(leftthand_pos);
+                pos.Add(leftelbow_pos);
+                pos.Add(leftwrist_pos);
 
 
-                    CameraSpacePoint HLpoint = body.Joints[JointType.HandLeft].Position;
-                    CameraSpacePoint HRpoint = body.Joints[JointType.HandRight].Position;
-                    ColorSpacePoint colorPointL = sensor.CoordinateMapper.MapCameraPointToColorSpace(HLpoint);
-                    DepthSpacePoint depthPointL = sensor.CoordinateMapper.MapCameraPointToDepthSpace(HLpoint);
-                    ColorSpacePoint colorPointR = sensor.CoordinateMapper.MapCameraPointToColorSpace(HRpoint);
-                    DepthSpacePoint depthPointR = sensor.CoordinateMapper.MapCameraPointToDepthSpace(HRpoint);
-                    txtLeft.Text = colorPointL.X.ToString() + "\n" + colorPointL.Y.ToString() + "\n" + depthPointL.X.ToString() + "\n" + depthPointL.Y.ToString();
-                    txtRight.Text = colorPointR.X.ToString() + "\n" + colorPointR.Y.ToString() + "\n" + depthPointR.X.ToString() + "\n" + depthPointL.Y.ToString();
+                //right leg
+                Point rightknee_pos = new Point(body.Joints[JointType.KneeRight].Position.X, body.Joints[JointType.KneeRight].Position.Y);
+                Point rightankel_pos = new Point(body.Joints[JointType.AnkleRight].Position.X, body.Joints[JointType.AnkleRight].Position.Y);
+                Point rightfoot_pos = new Point(body.Joints[JointType.FootRight].Position.X, body.Joints[JointType.FootRight].Position.Y);
 
-                    //txtLeft.Text = body.Joints[JointType.HandLeft].Position.X.ToString() + "\n" + body.Joints[JointType.HandLeft].Position.Y.ToString() + "\n" + body.Joints[JointType.HandLeft].Position.Z.ToString();
-                    // txtRight.Text = body.Joints[JointType.HandRight].Position.X.ToString() + "\n" + body.Joints[JointType.HandRight].Position.Y.ToString() +"\n" + body.Joints[JointType.HandRight].Position.Z.ToString();
+                pos.Add(rightknee_pos);
+                pos.Add(rightankel_pos);
+                pos.Add(rightfoot_pos);
 
+                //left leg
+                Point leftknee_pos = new Point(body.Joints[JointType.KneeLeft].Position.X, body.Joints[JointType.KneeLeft].Position.Y);
+                Point leftankel_pos = new Point(body.Joints[JointType.AnkleLeft].Position.X, body.Joints[JointType.AnkleLeft].Position.Y);
+                Point leftfoot_pos = new Point(body.Joints[JointType.FootLeft].Position.X, body.Joints[JointType.FootLeft].Position.Y);
 
+                pos.Add(leftknee_pos);
+                pos.Add(leftankel_pos);
+                pos.Add(leftfoot_pos);
 
+                CameraSpacePoint HLpoint = body.Joints[JointType.HandLeft].Position;
+                CameraSpacePoint HRpoint = body.Joints[JointType.HandRight].Position;
+                ColorSpacePoint colorPointL = sensor.CoordinateMapper.MapCameraPointToColorSpace(HLpoint);
+                DepthSpacePoint depthPointL = sensor.CoordinateMapper.MapCameraPointToDepthSpace(HLpoint);
+                ColorSpacePoint colorPointR = sensor.CoordinateMapper.MapCameraPointToColorSpace(HRpoint);
+                DepthSpacePoint depthPointR = sensor.CoordinateMapper.MapCameraPointToDepthSpace(HRpoint);
 
+                txtLeft.Text = colorPointL.X.ToString() + "\n" + colorPointL.Y.ToString() + "\n" + depthPointL.X.ToString() + "\n" + depthPointL.Y.ToString();
+                txtRight.Text = colorPointR.X.ToString() + "\n" + colorPointR.Y.ToString() + "\n" + depthPointR.X.ToString() + "\n" + depthPointL.Y.ToString();
 
-                    //for (int i = 0; i < objectsNum; i++)
-                    //{
-                    //    //if (righthand_pos == objects[i].Position)
-                    //    //{
-                    //    //    objects[i].IsTouched = true ;
-                    //    //}
-                    //    for (int j = 0; j < 18 ; j++)
-                    //    {
-                    //        if (SQR_Distance(pos[j],objects[i]) <= 300*300)
-                    //        {
-                    //            objects[i].isTouched() = true;
-                    //        }
-                    //    }
-                    //}
+                List<BaseObject> objects = game.getObjects();
+
+                for (int i = 0; i < objects.Count && !objects[i].IsTouched; i++)
+                {
+                   for (int j = 0; j < pos.Count; j++)
+                   {
+                       if (SQR_Distance(pos[j], objects[i].Position) <= 300*300)
+                       {
+                           objects[i].IsTouched = true;
+                       }
+                   }
                 }
             }
         }
@@ -212,7 +203,5 @@ namespace KinectGame
         {
             return ((a.X * a.X) - (b.X * b.X) + (a.Y) * (a.Y) - (b.Y) * (b.Y));
         }
-
-
     }
 }
