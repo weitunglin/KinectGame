@@ -32,13 +32,12 @@ namespace KinectGame
 
         private Body[] bodies = null;
 
-        private Game game = null;
+        //private Objects[] objects = null // initial object memory space
+        //private int objectsNum ;
 
         public MainWindow()
         {
             InitializeComponent();
-
-            this.game = new Game();
 
             this.sensor = KinectSensor.GetDefault();
             this.frameDescription = this.sensor.ColorFrameSource.CreateFrameDescription(ColorImageFormat.Rgba);
@@ -61,7 +60,10 @@ namespace KinectGame
 
                 using (KinectBuffer colorBuffer = colorFrame.LockRawImageBuffer())
                 {
+
                     this.bitmap.Lock();
+                    //object = Game.getObjects();
+                    //objectsNum = Game.getObjectsNum();
                     if (this.frameDescription.Width == this.bitmap.PixelWidth && this.frameDescription.Height == this.bitmap.PixelHeight)
                     {
                         colorFrame.CopyConvertedFrameDataToIntPtr(
@@ -83,11 +85,19 @@ namespace KinectGame
             {
                 if (frame != null)
                 {
+                    if (this.bodies == null)
+                    {
+                        this.bodies = new Body[frame.BodyCount];
+                    }
                     frame.GetAndRefreshBodyData(bodies);
 
                     Body body = bodies.Where(b => b.IsTracked).FirstOrDefault();
+                    if (body == null)
+                    {
+                        return;
+                    }
+                    List<Point> pos = new List<Point>();
 
-                    List<Point>pos = null;
 
                     //torso
                     Point head_pos = new Point(body.Joints[JointType.Head].Position.X, body.Joints[JointType.Head].Position.Y);
@@ -107,7 +117,7 @@ namespace KinectGame
                     //right hand
                     Point righthand_pos = new Point(body.Joints[JointType.HandRight].Position.X, body.Joints[JointType.HandRight].Position.Y);
                     Point rightelbow_pos = new Point(body.Joints[JointType.ElbowRight].Position.X, body.Joints[JointType.ElbowRight].Position.Y);
-                    Point rightwrist_pos=new Point(body.Joints[JointType.WristRight].Position.X, body.Joints[JointType.WristRight].Position.Y);
+                    Point rightwrist_pos = new Point(body.Joints[JointType.WristRight].Position.X, body.Joints[JointType.WristRight].Position.Y);
 
                     pos.Add(righthand_pos);
                     pos.Add(rightelbow_pos);
@@ -141,24 +151,42 @@ namespace KinectGame
                     pos.Add(leftankel_pos);
                     pos.Add(leftfoot_pos);
 
-                    txtLeft.Text = body.Joints[JointType.HandLeft].Position.Y.ToString();
-                    txtRight.Text = body.Joints[JointType.HandRight].Position.Y.ToString();
 
-                    List<BaseObject> objects = game.getObjects();
+                    CameraSpacePoint HLpoint = body.Joints[JointType.HandLeft].Position;
+                    CameraSpacePoint HRpoint = body.Joints[JointType.HandRight].Position;
+                    ColorSpacePoint colorPointL = sensor.CoordinateMapper.MapCameraPointToColorSpace(HLpoint);
+                    DepthSpacePoint depthPointL = sensor.CoordinateMapper.MapCameraPointToDepthSpace(HLpoint);
+                    ColorSpacePoint colorPointR = sensor.CoordinateMapper.MapCameraPointToColorSpace(HRpoint);
+                    DepthSpacePoint depthPointR = sensor.CoordinateMapper.MapCameraPointToDepthSpace(HRpoint);
+                    txtLeft.Text = colorPointL.X.ToString() + "\n" + colorPointL.Y.ToString() + "\n" + depthPointL.X.ToString() + "\n" + depthPointL.Y.ToString();
+                    txtRight.Text = colorPointR.X.ToString() + "\n" + colorPointR.Y.ToString() + "\n" + depthPointR.X.ToString() + "\n" + depthPointL.Y.ToString();
 
-                    for (int i = 0; i < objects.Count && !objects[i].IsTouched; i++)
-                    {
-                        for (int j = 0; j < pos.Count; j++)
-                        {
-                            if (SQR_Distance(pos[j], objects[i].Position) <= 300*300)
-                            {
-                                objects[i].IsTouched = true;
-                            }
-                        }
-                    }
+                    //txtLeft.Text = body.Joints[JointType.HandLeft].Position.X.ToString() + "\n" + body.Joints[JointType.HandLeft].Position.Y.ToString() + "\n" + body.Joints[JointType.HandLeft].Position.Z.ToString();
+                    // txtRight.Text = body.Joints[JointType.HandRight].Position.X.ToString() + "\n" + body.Joints[JointType.HandRight].Position.Y.ToString() +"\n" + body.Joints[JointType.HandRight].Position.Z.ToString();
+
+
+
+
+
+                    //for (int i = 0; i < objectsNum; i++)
+                    //{
+                    //    //if (righthand_pos == objects[i].Position)
+                    //    //{
+                    //    //    objects[i].IsTouched = true ;
+                    //    //}
+                    //    for (int j = 0; j < 18 ; j++)
+                    //    {
+                    //        if (SQR_Distance(pos[j],objects[i]) <= 300*300)
+                    //        {
+                    //            objects[i].isTouched() = true;
+                    //        }
+                    //    }
+                    //}
                 }
             }
         }
+
+
 
         private void Kinect_Class2_Loaded(object sender, RoutedEventArgs e)
         {
@@ -184,5 +212,7 @@ namespace KinectGame
         {
             return ((a.X * a.X) - (b.X * b.X) + (a.Y) * (a.Y) - (b.Y) * (b.Y));
         }
+
+
     }
 }
