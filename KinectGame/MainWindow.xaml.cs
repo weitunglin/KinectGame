@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Drawing;
 using Microsoft.Kinect;
 
 namespace KinectGame
@@ -26,13 +27,18 @@ namespace KinectGame
         private WriteableBitmap bitmap = null;
 
         private ColorFrameReader colorFrameReader = null;
+
         private BodyFrameReader bodyFrameReader = null;
 
         private Body[] bodies = null;
 
+        private Game game = null;
+
         public MainWindow()
         {
             InitializeComponent();
+
+            this.game = new Game();
 
             this.sensor = KinectSensor.GetDefault();
             this.frameDescription = this.sensor.ColorFrameSource.CreateFrameDescription(ColorImageFormat.Rgba);
@@ -56,7 +62,6 @@ namespace KinectGame
                 using (KinectBuffer colorBuffer = colorFrame.LockRawImageBuffer())
                 {
                     this.bitmap.Lock();
-
                     if (this.frameDescription.Width == this.bitmap.PixelWidth && this.frameDescription.Height == this.bitmap.PixelHeight)
                     {
                         colorFrame.CopyConvertedFrameDataToIntPtr(
@@ -82,8 +87,7 @@ namespace KinectGame
 
                     Body body = bodies.Where(b => b.IsTracked).FirstOrDefault();
 
-                    List<Point>pos=null;
-                   
+                    List<Point>pos = null;
 
                     //torso
                     Point head_pos = new Point(body.Joints[JointType.Head].Position.X, body.Joints[JointType.Head].Position.Y);
@@ -137,18 +141,18 @@ namespace KinectGame
                     pos.Add(leftankel_pos);
                     pos.Add(leftfoot_pos);
 
+                    txtLeft.Text = body.Joints[JointType.HandLeft].Position.Y.ToString();
+                    txtRight.Text = body.Joints[JointType.HandRight].Position.Y.ToString();
 
-                    for (int i = 0; i < objectsNum; i++)
+                    List<BaseObject> objects = game.getObjects();
+
+                    for (int i = 0; i < objects.Count && !objects[i].IsTouched; i++)
                     {
-                        //if (righthand_pos == objects[i].Position)
-                        //{
-                        //    objects[i].IsTouched = true ;
-                        //}
-                        for (int j = 0; j < 18 ; j++)
+                        for (int j = 0; j < pos.Count; j++)
                         {
                             if (SQR_Distance(pos[j],objects[i]) <= 300*300)
                             {
-                                objects[i].isTouched() = true;
+                                objects[i].isTouched = true;
                             }
                         }
                     }
@@ -174,6 +178,11 @@ namespace KinectGame
                 this.sensor.Close();
                 this.sensor = null;
             }
+        }
+
+        private double SQR_Distance(Point a, Point b)
+        {
+            return ((a.X * a.X) - (b.X * b.X) + (a.Y) * (a.Y) - (b.Y) * (b.Y));
         }
     }
 }
