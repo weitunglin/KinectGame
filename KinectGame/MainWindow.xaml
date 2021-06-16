@@ -5,10 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:KinectGame"
         mc:Ignorable="d"
-        Title="MainWindow" Height="900" Width="1440" ResizeMode="CanMinimize"
+        Title="MainWindow" Height="900" Width="1560" ResizeMode="CanMinimize"
         Loaded="Kinect_Class2_Loaded" Unloaded="Kinect_Class2_Unloaded">
     <Grid>
-        <Image x:Name="ImageSource" HorizontalAlignment="Left" Height="720" Margin="70,0,0,0" VerticalAlignment="Top" Width="1280"/>
-        <Canvas x:Name="ImageCanvas"  HorizontalAlignment="Left" Height="720" Margin="70,0,0,0" VerticalAlignment="Top" Width="1280" Background="Transparent"/>
+        <TextBlock x:Name="txtLeft" Height="60" Margin="10,74,1410.6,736.4">txt left</TextBlock>
+        <TextBlock x:Name="txtRight" Height="60" Margin="10,139,1410.6,671.4">txt right</TextBlock>
+        <Image x:Name="ImageSource" HorizontalAlignment="Left" Height="720" Margin="148,10,0,0" VerticalAlignment="Top" Width="1280"/>
+        <Canvas x:Name="ImageCanvas"  HorizontalAlignment="Left" Height="720" Margin="148,10,0,0" VerticalAlignment="Top" Width="1280" Background="Transparent"/>
     </Grid>
 </Window>

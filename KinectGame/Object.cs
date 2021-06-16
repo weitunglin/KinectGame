@@ -1,5 +1,7 @@
+using System.Windows;
+
 namespace KinectGame {
-    enum Type
+    public enum ObjectType
     {
         Apple,
         Bubble,
@@ -11,7 +13,7 @@ namespace KinectGame {
     {
         public string Id { get; set; }
 
-        public Type Type { get; set; }
+        public ObjectType Type { get; set; }
 
         public Point Position { get; set; }
 
@@ -21,7 +23,7 @@ namespace KinectGame {
 
         public int Heart { get; set; }
 
-        public Object(string id, Type type, Point position, bool isTouched)
+        public BaseObject(string id, ObjectType type, Point position, bool isTouched)
         {
             Id = id;
             Type = type;
@@ -32,7 +34,7 @@ namespace KinectGame {
 
     public class Apple : BaseObject
     {
-        public Apple(string id, Position position, bool isTouched) : base(id, Type.Apple, position, isTouched)
+        public Apple(string id, Point position, bool isTouched) : base(id, ObjectType.Apple, position, isTouched)
         {
            Credit = 10; 
            Heart = 0;
@@ -41,7 +43,7 @@ namespace KinectGame {
 
     public class Bubble : BaseObject
     {
-        public Bubble(string id, Position position, bool isTouched) : base(id, Type.Bubble, position, isTouched)
+        public Bubble(string id, Point position, bool isTouched) : base(id, ObjectType.Bubble, position, isTouched)
         {
             Credit = 5;
             Heart = 0;
@@ -50,7 +52,7 @@ namespace KinectGame {
 
     public class Bomb : BaseObject
     {
-        public Bomb(string id, Position position, bool isTouched) : base(id, Type.Bomb, position, isTouched)
+        public Bomb(string id, Point position, bool isTouched) : base(id, ObjectType.Bomb, position, isTouched)
         {
             Credit = 0;
             Heart = -1;
@@ -59,7 +61,7 @@ namespace KinectGame {
 
     public class Heart : BaseObject
     {
-        public Heart(string id, Position position, bool isTouched) : base(id, Type.Heart, position, isTouched)
+        public Heart(string id, Point position, bool isTouched) : base(id, ObjectType.Heart, position, isTouched)
         {
             Credit = 0;
             Heart = 1;

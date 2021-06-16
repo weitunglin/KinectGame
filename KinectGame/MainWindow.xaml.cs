@@ -150,9 +150,9 @@ namespace KinectGame
                     {
                         for (int j = 0; j < pos.Count; j++)
                         {
-                            if (SQR_Distance(pos[j],objects[i]) <= 300*300)
+                            if (SQR_Distance(pos[j], objects[i].Position) <= 300*300)
                             {
-                                objects[i].isTouched = true;
+                                objects[i].IsTouched = true;
                             }
                         }
                     }
