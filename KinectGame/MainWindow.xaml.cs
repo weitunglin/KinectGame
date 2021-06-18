@@ -14,8 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Drawing;
 using Microsoft.Kinect;
-
-
+using System.Diagnostics;
 
 namespace KinectGame
 {
@@ -40,12 +39,7 @@ namespace KinectGame
 
         private DepthSpacePoint SpineShoudler = new DepthSpacePoint();
 
-        private int[] status = new int[4]{ 0, 1, 2, 3 };
-
-        private const int Start = 0;
-        private const int Gaming = 1;
-        private const int Pause = 2;
-        private const int accout = 3;
+        private GameStatus gamestatus=GameStatus.NotStartYet;
 
 
 
@@ -152,9 +146,11 @@ namespace KinectGame
                 {
                    for (int j = 0; j < pos.Count; j++)
                    {
-                       if (SQR_Distance(pos[j], objects[i].Position) <= 300*300)
+                       if (SQR_Distance(pos[j], objects[i].Position) <= 10)
                        {
                            objects[i].IsTouched = true;
+                            Debug.WriteLine(objects[i].Id + "is touched");
+
                        }
                    }
                 }
@@ -185,7 +181,7 @@ namespace KinectGame
 
         private double SQR_Distance(ColorSpacePoint a, Point b)
         {
-            return ((a.X * a.X) - (b.X * b.X) + (a.Y) * (a.Y) - (b.Y) * (b.Y));
+            return Math.Sqrt((a.X * a.X) - (b.X * b.X) + (a.Y) * (a.Y) - (b.Y) * (b.Y));
         }
 
         private void add_to_list( Body body)
@@ -274,6 +270,16 @@ namespace KinectGame
             pos.Add(leftknee_pos);
             pos.Add(leftankel_pos);
             pos.Add(leftfoot_pos);
+        }
+
+        private void startBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (gamestatus == GameStatus.NotStartYet)
+            {
+                gamestatus = GameStatus.Gaming;
+            }
+            game.StartGame(gamestatus);
+            startBtn.IsEnabled = false;
         }
     }
 }

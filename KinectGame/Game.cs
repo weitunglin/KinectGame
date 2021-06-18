@@ -9,6 +9,12 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace KinectGame {
+    public enum GameStatus{
+        NotStartYet,
+        Gaming,
+        Pause,
+        GameOver
+    }
     public class Game {
         private Random random = null;
         private Canvas canvas = null;
@@ -16,6 +22,7 @@ namespace KinectGame {
         private double imageSourceWidth;
         private double imageSourceHeight;
         private List<BaseObject> objects = null;
+        
 
         public Game(Canvas c, double sourceWidth, double sourceHeight)
         {
@@ -82,6 +89,11 @@ namespace KinectGame {
                     }
                 }
             }
+        }
+
+        public void StartGame(GameStatus gamestatus)
+        {
+
         }
     }
 }

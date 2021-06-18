@@ -8,14 +8,29 @@
         Title="MainWindow" Height="900" Width="1560" ResizeMode="CanMinimize"
         Loaded="Kinect_Class2_Loaded" Unloaded="Kinect_Class2_Unloaded">
     <Grid>
-        <TextBlock x:Name="txtLeft" Height="60" Margin="10,74,1410.6,736.4">txt left</TextBlock>
-        <TextBlock x:Name="txtRight" Height="60" Margin="10,139,1410.6,671.4">txt right</TextBlock>
-        <TextBlock x:Name="SpineShoulderDepthTxt" Height="60" Margin="10,210,1410.6,500">spineshoudlerDepth</TextBlock>
-        <Image x:Name="ImageSource" HorizontalAlignment="Left" Height="720" Margin="148,10,0,0" VerticalAlignment="Top" Width="1280"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0*"/>
+            <ColumnDefinition Width="0*"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <TextBlock x:Name="txtLeft" Height="60" Margin="10,74,1410.6,736.4" Grid.ColumnSpan="3">txt left</TextBlock>
+        <TextBlock x:Name="txtRight" Height="60" Margin="10,139,1410.6,671.4" Grid.ColumnSpan="3">txt right</TextBlock>
+        <TextBlock x:Name="SpineShoulderDepthTxt" Height="60" Margin="10,260,1410.6,550.4" Grid.ColumnSpan="3">spineshoudlerDepth</TextBlock>
+        <Image x:Name="ImageSource" HorizontalAlignment="Left" Height="720" Margin="148,10,0,0" VerticalAlignment="Top" Width="1280" Grid.ColumnSpan="3"/>
+        <Button x:Name="startBtn" Grid.ColumnSpan="3" Margin="3,471,1409.6,337.4" RenderTransformOrigin="0.5,0.5" Click="startBtn_Click" >
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="0.012"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Button.RenderTransform> StartBtn
+        </Button>
 
-       
-        <Canvas x:Name="ImageCanvas"  HorizontalAlignment="Left" Height="720" Margin="148,10,0,0" VerticalAlignment="Top" Width="1280" Background="Transparent"/>
-        <Canvas>
+
+        <Canvas x:Name="ImageCanvas"  HorizontalAlignment="Left" Height="720" Margin="148,10,0,0" VerticalAlignment="Top" Width="1280" Background="Transparent" Grid.ColumnSpan="3"/>
+        <Canvas Grid.ColumnSpan="3" Margin="0,0,-0.4,0.4">
             <Ellipse x:Name="Circle" Fill="#CCCCCC" Width="100" Height="100" Canvas.Left="100" Canvas.Top="200" ></Ellipse>
         </Canvas>
     </Grid>
