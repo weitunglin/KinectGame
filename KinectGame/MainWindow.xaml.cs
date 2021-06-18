@@ -132,11 +132,12 @@ namespace KinectGame
 
                 const int  lefthand = 9;
                 const int righthand = 6;
-              
 
-                add_to_list(pos, body);
 
-                txtLeft.Text = pos[lefthand].X.ToString() + "\n" + pos[lefthand].Y.ToString() + "\n" /*+ pos[9].X.ToString() + "\n" + pos[9].Y.ToString()*/;
+                add_to_list(body);
+
+                //   txtLeft.Text = pos[lefthand].X.ToString() + "\n" + pos[lefthand].Y.ToString() + "\n" /*+ pos[9].X.ToString() + "\n" + pos[9].Y.ToString()*/;
+                txtLeft.Text = pos[lefthand].X.ToString() + "\n" + pos[lefthand].Y.ToString() + "\n";
                 txtRight.Text = pos[righthand].X.ToString() + "\n" + pos[righthand].Y.ToString() + "\n" /*+ pos[6].X.ToString() + "\n" + pos[6].Y.ToString()*/;
                 SpineShoulderDepthTxt.Text = SpineShoudler.X.ToString() + "\n" + SpineShoudler.Y.ToString() + "\n"; 
 
@@ -187,11 +188,11 @@ namespace KinectGame
             return ((a.X * a.X) - (b.X * b.X) + (a.Y) * (a.Y) - (b.Y) * (b.Y));
         }
 
-        private void add_to_list(List<ColorSpacePoint> pos, Body body)
+        private void add_to_list( Body body)
         {
+            pos.Clear();
+
             //torso
-
-
             CameraSpacePoint head_ = body.Joints[JointType.Head].Position;
             CameraSpacePoint spineshoulder_ = body.Joints[JointType.SpineShoulder].Position;
             CameraSpacePoint leftshoulder_ = body.Joints[JointType.ShoulderLeft].Position;
