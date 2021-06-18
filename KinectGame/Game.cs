@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
@@ -39,13 +40,13 @@ namespace KinectGame {
         private void randomObjects(Object source, EventArgs e)
         {
             objects.Clear();
-            int objectNum = random.Next(2, 3);
+            int objectNum = random.Next(2, 4);
 
             for (int i = 0; i < objectNum; ++i)
             {
                 int type = random.Next(0, 2);
-                int x = random.Next(0, 1919);
-                int y = random.Next(0, 1079);
+                int x = random.Next(0, 1920);
+                int y = random.Next(0, 1080);
                 string id = Guid.NewGuid().ToString();
 
                 switch (type)
@@ -67,11 +68,11 @@ namespace KinectGame {
                 SolidColorBrush mySolidColorBrush = new SolidColorBrush();
                 mySolidColorBrush.Color = Color.FromArgb(255, 255, 0, 0);
                 myEllipse.Fill = mySolidColorBrush;
-                myEllipse.Width = 20;
-                myEllipse.Height = 20;
+                myEllipse.Width = 40;
+                myEllipse.Height = 40;
                 canvas.Children.Add(myEllipse);
-                double X = item.Position.X * 1280.0 / 512;
-                double Y = item.Position.Y * 720.0 / 424;
+                double X = item.Position.X * 1280.0 / 1920.0;
+                double Y = item.Position.Y * 720.0 / 1080.0;
                 if (0 < X && X < this.imageSourceWidth)
                 {
                     if (0 < Y && Y < this.imageSourceHeight)
