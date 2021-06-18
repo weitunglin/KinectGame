@@ -1,16 +1,20 @@
 using System;
 using System.Collections.Generic;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace KinectGame {
     public class Game {
         private Random random = null;
         private Canvas canvas = null;
+        private DispatcherTimer timer = null;
         private double imageSourceWidth;
         private double imageSourceHeight;
+        private List<BaseObject> objects = null;
 
         public Game(Canvas c, double sourceWidth, double sourceHeight)
         {
@@ -18,15 +22,44 @@ namespace KinectGame {
             this.random = new Random();
             this.imageSourceHeight = sourceHeight;
             this.imageSourceWidth = sourceWidth;
+
+            this.objects = new List<BaseObject>();
+
+            timer = new DispatcherTimer();
+            timer.Tick += new EventHandler(randomObjects);
+            timer.Interval = new TimeSpan(0, 0, 2);
+            timer.Start();
         }
 
         public List<BaseObject> getObjects()
         {
-            this.canvas.Children.Clear();
+            return objects;
+        }
 
-            var objects = new List<BaseObject>() {
-                new Apple(Guid.NewGuid().ToString(), new Point(random.Next(0, 1919), random.Next(0, 1079)), false),
-                new Bubble(Guid.NewGuid().ToString(), new Point(random.Next(0, 1919), random.Next(0, 1079)), false) };
+        private void randomObjects(Object source, EventArgs e)
+        {
+            objects.Clear();
+            int objectNum = random.Next(2, 3);
+
+            for (int i = 0; i < objectNum; ++i)
+            {
+                int type = random.Next(0, 2);
+                int x = random.Next(0, 1919);
+                int y = random.Next(0, 1079);
+                string id = Guid.NewGuid().ToString();
+
+                switch (type)
+                {
+                    case 0:
+                        objects.Add(new Apple(id, new Point(x, y), false));
+                        break;
+                    case 1:
+                        objects.Add(new Bubble(id, new Point(x, y), false));
+                        break;
+                }
+            }
+
+            canvas.Children.Clear();
 
             foreach (var item in objects)
             {
@@ -36,7 +69,7 @@ namespace KinectGame {
                 myEllipse.Fill = mySolidColorBrush;
                 myEllipse.Width = 20;
                 myEllipse.Height = 20;
-                this.canvas.Children.Add(myEllipse);
+                canvas.Children.Add(myEllipse);
                 double X = item.Position.X * 1280.0 / 512;
                 double Y = item.Position.Y * 720.0 / 424;
                 if (0 < X && X < this.imageSourceWidth)
@@ -48,8 +81,6 @@ namespace KinectGame {
                     }
                 }
             }
-
-            return objects;
         }
     }
 }
