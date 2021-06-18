@@ -118,7 +118,7 @@ namespace KinectGame
 
                 if (body == null)
                 {
-                    txtLeft.Text = "no Body";
+                    txtLeft.Text = "No body";
                     return;
                     
                 }
