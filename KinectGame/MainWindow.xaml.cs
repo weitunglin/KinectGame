@@ -39,9 +39,7 @@ namespace KinectGame
 
         private DepthSpacePoint SpineShoudler = new DepthSpacePoint();
 
-        private GameStatus gamestatus=GameStatus.NotStartYet;
-
-
+        private GameStatus gameStatus = GameStatus.NotStartYet;
 
         public MainWindow()
         {
@@ -82,10 +80,6 @@ namespace KinectGame
 
                         this.bitmap.AddDirtyRect(new Int32Rect(0, 0, this.bitmap.PixelWidth, this.bitmap.PixelHeight));
                     }
-
-                    
-
-
 
                     this.bitmap.Unlock();
                 }
@@ -213,7 +207,6 @@ namespace KinectGame
             pos.Add(righthip_pos);
 
             //right hand
-
             CameraSpacePoint righthand_ = body.Joints[JointType.HandRight].Position;
             CameraSpacePoint rightelbow_ = body.Joints[JointType.ElbowRight].Position;
             CameraSpacePoint rightwrist_ = body.Joints[JointType.WristRight].Position;
@@ -227,8 +220,6 @@ namespace KinectGame
             pos.Add(rightwrist_pos);
 
             //left hand
-           
-
             CameraSpacePoint leftthand_ = body.Joints[JointType.HandLeft].Position;
             CameraSpacePoint leftelbow_ = body.Joints[JointType.ElbowLeft].Position;
             CameraSpacePoint leftwrist_ = body.Joints[JointType.WristLeft].Position;
@@ -242,9 +233,7 @@ namespace KinectGame
             pos.Add(leftwrist_pos);
 
 
-            //right leg
-
-
+            //right
             CameraSpacePoint rightknee_ = body.Joints[JointType.KneeRight].Position;
             CameraSpacePoint rightankel_ = body.Joints[JointType.AnkleRight].Position;
             CameraSpacePoint rightfoot_ = body.Joints[JointType.FootRight].Position;
@@ -258,7 +247,6 @@ namespace KinectGame
             pos.Add(rightfoot_pos);
 
             //left leg
-
             CameraSpacePoint leftknee_ = body.Joints[JointType.KneeLeft].Position;
             CameraSpacePoint leftankel_ = body.Joints[JointType.AnkleLeft].Position;
             CameraSpacePoint leftfoot_ = body.Joints[JointType.FootLeft].Position;
@@ -274,12 +262,18 @@ namespace KinectGame
 
         private void startBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (gamestatus == GameStatus.NotStartYet)
+            if (gameStatus == GameStatus.NotStartYet)
             {
-                gamestatus = GameStatus.Gaming;
+                game.StartGame(gameStatus);
+                startBtn.Content = "Pause";
+                gameStatus = GameStatus.Gaming;
             }
-            game.StartGame(gamestatus);
-            startBtn.IsEnabled = false;
+            else if (gameStatus == GameStatus.Gaming)
+            {
+                game.StartGame(gameStatus);
+                startBtn.Content = "Start";
+                gameStatus = GameStatus.NotStartYet;
+            }
         }
     }
 }

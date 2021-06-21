@@ -5,6 +5,7 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
@@ -36,7 +37,6 @@ namespace KinectGame {
             timer = new DispatcherTimer();
             timer.Tick += new EventHandler(randomObjects);
             timer.Interval = new TimeSpan(0, 0, 2);
-            timer.Start();
         }
 
         public List<BaseObject> getObjects()
@@ -47,6 +47,7 @@ namespace KinectGame {
         private void randomObjects(Object source, EventArgs e)
         {
             objects.Clear();
+            canvas.Children.Clear();
             int objectNum = random.Next(2, 4);
 
             for (int i = 0; i < objectNum; ++i)
@@ -56,44 +57,53 @@ namespace KinectGame {
                 int y = random.Next(0, 1080);
                 string id = Guid.NewGuid().ToString();
 
+                BaseObject item = null;
+
                 switch (type)
                 {
                     case 0:
-                        objects.Add(new Apple(id, new Point(x, y), false));
+                        item = new Apple(id, new Point(x, y), false);
                         break;
                     case 1:
-                        objects.Add(new Bubble(id, new Point(x, y), false));
+                        item = new Bubble(id, new Point(x, y), false);
                         break;
                 }
-            }
 
-            canvas.Children.Clear();
-
-            foreach (var item in objects)
-            {
-                Ellipse myEllipse = new Ellipse();
-                SolidColorBrush mySolidColorBrush = new SolidColorBrush();
-                mySolidColorBrush.Color = Color.FromArgb(255, 255, 0, 0);
-                myEllipse.Fill = mySolidColorBrush;
-                myEllipse.Width = 40;
-                myEllipse.Height = 40;
-                canvas.Children.Add(myEllipse);
-                double X = item.Position.X * 1280.0 / 1920.0;
-                double Y = item.Position.Y * 720.0 / 1080.0;
-                if (0 < X && X < this.imageSourceWidth)
+                Image image = new Image
                 {
-                    if (0 < Y && Y < this.imageSourceHeight)
-                    {
-                        Canvas.SetLeft(myEllipse, X);
-                        Canvas.SetTop(myEllipse, Y);
-                    }
+                    Width = 40,
+                    Height = 40,
+                    Source = new BitmapImage(item.ImageUri)
+                };
+                addObjectToCanvas(item.Position, image);
+            }
+        }
+
+        private void addObjectToCanvas(Point pos, Image image)
+        {
+            canvas.Children.Add(image);
+            double X = pos.X * 1280.0 / 1920.0;
+            double Y = pos.Y * 720.0 / 1080.0;
+            if (0 < X && X < this.imageSourceWidth)
+            {
+                if (0 < Y && Y < this.imageSourceHeight)
+                {
+                    Canvas.SetLeft(image, X);
+                    Canvas.SetTop(image, Y);
                 }
             }
         }
 
-        public void StartGame(GameStatus gamestatus)
+        public void StartGame(GameStatus gameStatus)
         {
-
+            if (gameStatus == GameStatus.NotStartYet)
+            {
+                timer.Start();
+            } else
+            {
+                canvas.Children.Clear();
+                timer.Stop();
+            }
         }
     }
 }
