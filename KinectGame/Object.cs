@@ -1,3 +1,4 @@
+using System;
 using System.Windows;
 
 namespace KinectGame {
@@ -12,16 +13,12 @@ namespace KinectGame {
     public class BaseObject
     {
         public string Id { get; set; }
-
         public ObjectType Type { get; set; }
-
         public Point Position { get; set; }
-
         public bool IsTouched { get; set; }
-
         public int Credit { get; set; }
-
         public int Heart { get; set; }
+        public Uri ImageUri { get; set; }
 
         public BaseObject(string id, ObjectType type, Point position, bool isTouched)
         {
@@ -36,8 +33,9 @@ namespace KinectGame {
     {
         public Apple(string id, Point position, bool isTouched) : base(id, ObjectType.Apple, position, isTouched)
         {
-           Credit = 10; 
-           Heart = 0;
+            Credit = 10; 
+            Heart = 0;
+            ImageUri = new Uri(new Uri(AppDomain.CurrentDomain.BaseDirectory), "../../../Source/apple.png");
         }
     }
 
@@ -47,6 +45,7 @@ namespace KinectGame {
         {
             Credit = 5;
             Heart = 0;
+            ImageUri = new Uri(new Uri(AppDomain.CurrentDomain.BaseDirectory), "../../../Source/bubble.jpeg");
         }
     }
 

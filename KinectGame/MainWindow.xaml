@@ -28,7 +28,9 @@
                     <RotateTransform Angle="0.012"/>
                     <TranslateTransform/>
                 </TransformGroup>
-            </Button.RenderTransform>
+
+            </Button.RenderTransform>Start
+
         </Button>
 
 
