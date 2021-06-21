@@ -59,7 +59,7 @@ namespace KinectGame
             this.sensor.Open();
 
 		    this.game = new Game(this.ImageCanvas, this.ImageSource.Width, this.ImageSource.Height);
-
+           
         }
 
         private void ColorFrameReader_FrameArrived(object sender, ColorFrameArrivedEventArgs e)
@@ -83,11 +83,18 @@ namespace KinectGame
                         this.bitmap.AddDirtyRect(new Int32Rect(0, 0, this.bitmap.PixelWidth, this.bitmap.PixelHeight));
                     }
 
-                    
-
-
-
                     this.bitmap.Unlock();
+
+                    //if(timer == 0||health == 0)
+                    //{
+                    //    gamestatus = GameStatus.GameOver;
+                    //}
+
+                    if(gamestatus == GameStatus.Pause)
+                    {
+                        pausebtn.Visibility = Visibility.Visible;
+                    }
+
                 }
             }
         }
@@ -117,7 +124,7 @@ namespace KinectGame
                     
                 }
 
-                
+               
                 
 
                 List<BaseObject> objects = game.getObjects();
@@ -130,15 +137,21 @@ namespace KinectGame
 
                 add_to_list(body);
 
-                //   txtLeft.Text = pos[lefthand].X.ToString() + "\n" + pos[lefthand].Y.ToString() + "\n" /*+ pos[9].X.ToString() + "\n" + pos[9].Y.ToString()*/;
+                
                 txtLeft.Text = pos[lefthand].X.ToString() + "\n" + pos[lefthand].Y.ToString() + "\n";
                 txtRight.Text = pos[righthand].X.ToString() + "\n" + pos[righthand].Y.ToString() + "\n" /*+ pos[6].X.ToString() + "\n" + pos[6].Y.ToString()*/;
                 SpineShoulderDepthTxt.Text = SpineShoudler.X.ToString() + "\n" + SpineShoudler.Y.ToString() + "\n"; 
 
                //draw circle test
                 if (!float.IsInfinity(pos[lefthand].Y) && (!float.IsInfinity(pos[lefthand].X))){
-                    Canvas.SetTop(Circle, pos[lefthand].Y - 200);
-                    Canvas.SetLeft(Circle, pos[lefthand].X - 200);
+                 //   Canvas.SetTop(Circle, pos[lefthand].Y - 200);
+                 //   Canvas.SetLeft(Circle, pos[lefthand].X - 200);
+                }
+
+
+                if(SpineShoudler.X <= 200)
+                {
+                    gamestatus = GameStatus.Pause;
                 }
 
 
@@ -150,7 +163,7 @@ namespace KinectGame
                        {
                            objects[i].IsTouched = true;
                             Debug.WriteLine(objects[i].Id + "is touched");
-
+                            break;
                        }
                    }
                 }
@@ -162,6 +175,7 @@ namespace KinectGame
         private void Kinect_Class2_Loaded(object sender, RoutedEventArgs e)
         {
             this.ImageSource.Source = this.bitmap;
+            pausebtn.Visibility = Visibility.Hidden;
         }
 
         private void Kinect_Class2_Unloaded(object sender, RoutedEventArgs e)
@@ -279,7 +293,7 @@ namespace KinectGame
                 gamestatus = GameStatus.Gaming;
             }
             game.StartGame(gamestatus);
-            startBtn.IsEnabled = false;
+            startBtn.Visibility = Visibility.Hidden;
         }
     }
 }
