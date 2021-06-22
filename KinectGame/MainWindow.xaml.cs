@@ -106,7 +106,7 @@ namespace KinectGame
 
                     if (game.gameStatus == GameStatus.Pause)
                     {
-                        pauseTextBox.Visibility = Visibility.Visible;
+                        pauseTextBox.Visibility = Visibility.Hidden;
                     }
                 }
             }
