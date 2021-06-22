@@ -20,24 +20,46 @@ namespace KinectGame {
         private Random random = null;
         private Canvas canvas = null;
         private DispatcherTimer timer = null;
+        private DispatcherTimer dt = null;
         private double imageSourceWidth;
         private double imageSourceHeight;
         private double imageSourceBoarder;
         private List<BaseObject> objects = null;
-        
+        private TextBox GameTimer = null;
+        public int TotalTime;
+        private int Minutes
+        {
+            get
+            {
+                return TotalTime / 60;
+            }
+        }
+        private int Seconds
+        {
+            get
+            {
+                return TotalTime % 60;
+            }
+        }
 
-        public Game(Canvas c, double sourceWidth, double sourceHeight, double sourceBoarder)
+
+        public Game(Canvas c, double sourceWidth, double sourceHeight, double sourceBoarder, TextBox _GameTimer)
         {
             this.canvas = c;
             this.random = new Random();
             this.imageSourceHeight = sourceHeight;
             this.imageSourceWidth = sourceWidth;
             this.imageSourceBoarder = sourceBoarder;
+            this.GameTimer = _GameTimer;
             this.objects = new List<BaseObject>();
 
             timer = new DispatcherTimer();
             timer.Tick += new EventHandler(randomObjects);
             timer.Interval = new TimeSpan(0, 0, 2);
+            TotalTime = 15;
+            dt = new DispatcherTimer();
+            dt.Interval = new TimeSpan(0, 0, 1);
+            dt.Tick += dtTicker;
         }
 
         public List<BaseObject> getObjects()
@@ -67,7 +89,6 @@ namespace KinectGame {
                     NoDuplicate = true;
                     foreach (BaseObject PositionCheck in objects)
                     {
-                        Console.WriteLine(x.ToString() + " , " + y.ToString() + " / " + PositionCheck.Position.X.ToString() + " , " + PositionCheck.Position.Y.ToString());
                         if (x >= PositionCheck.Position.X - imageSourceBoarder && x <= PositionCheck.Position.X + 100 + imageSourceBoarder && y >= PositionCheck.Position.Y - imageSourceBoarder && y <= PositionCheck.Position.Y + 100 + imageSourceBoarder)
                         {
                             NoDuplicate = false;
@@ -125,11 +146,34 @@ namespace KinectGame {
             }
         }
 
+        private void dtTicker(object sender, EventArgs e)
+        {
+            TotalTime--;
+            if (TotalTime <= 0)
+            {
+                dt.Stop();
+                timer.Stop();
+                canvas.Children.Clear();
+                GameTimer.Text = "Timeout";
+            }
+            else if (TotalTime <= 10)
+            {
+                GameTimer.Foreground = Brushes.Red;
+                GameTimer.Text = Minutes.ToString() + ":" + Seconds.ToString();
+            }
+            else
+            {
+                GameTimer.Text = Minutes.ToString() + ":" + Seconds.ToString();
+            }
+
+        }
+
         public void StartGame(GameStatus gameStatus)
         {
             if (gameStatus == GameStatus.NotStartYet)
             {
                 timer.Start();
+                dt.Start();
             } else
             {
                 canvas.Children.Clear();

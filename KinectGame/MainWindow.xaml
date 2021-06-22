@@ -12,15 +12,17 @@
             <ColumnDefinition Width="0*"/>
             <ColumnDefinition Width="0*"/>
             <ColumnDefinition Width="0*"/>
+            <ColumnDefinition Width="0*"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Image x:Name="ImageSource" HorizontalAlignment="Left" Height="720" Margin="143,51,0,0" VerticalAlignment="Top" Width="1280" Grid.ColumnSpan="4"/>
-        <Canvas x:Name="ImageCanvas"  HorizontalAlignment="Left" Height="720" Margin="148,51,0,0" VerticalAlignment="Top" Width="1280" Background="Transparent" Grid.ColumnSpan="4"/>
-        <TextBlock x:Name="txtLeft" Height="60" Margin="10,74,1410.6,736.4" Grid.ColumnSpan="4"><Run Text="txt left"/></TextBlock>
-        <TextBlock x:Name="txtRight" Height="60" Margin="10,139,1410.6,671.4" Grid.ColumnSpan="4"><Run Text="txt right"/></TextBlock>
-        <TextBlock x:Name="SpineShoulderDepthTxt" Height="60" Margin="10,260,1410.6,550.4" Grid.ColumnSpan="4"><Run Text="spineshoudlerDepth"/></TextBlock>
-        <TextBlock x:Name="Pause" Height="60"><Run Text="Pause"/></TextBlock>
-        <Button x:Name="startBtn" Grid.ColumnSpan="4" Margin="544,494,474.6,208.4" RenderTransformOrigin="0.5,0.5" Click="startBtn_Click" Content="StartBtn" >
+        <Image x:Name="ImageSource" HorizontalAlignment="Left" Height="720" Margin="143,51,0,0" VerticalAlignment="Top" Width="1280" Grid.ColumnSpan="5"/>
+        <Canvas x:Name="ImageCanvas"  HorizontalAlignment="Left" Height="720" Margin="148,51,0,0" VerticalAlignment="Top" Width="1280" Background="Transparent" Grid.ColumnSpan="5">
+        </Canvas>
+        <TextBlock x:Name="txtLeft" Height="60" Margin="10,74,1410,737" Grid.ColumnSpan="5"><Run Text="txt left"/></TextBlock>
+        <TextBlock x:Name="txtRight" Height="60" Margin="10,139,1410,672" Grid.ColumnSpan="5"><Run Text="txt right"/></TextBlock>
+        <TextBlock x:Name="SpineShoulderDepthTxt" Height="60" Margin="10,260,1410,551" Grid.ColumnSpan="5"><Run Text="spineshoudlerDepth"/></TextBlock>
+        <TextBlock x:Name="Pause" Height="60" Grid.ColumnSpan="5" Margin="0,406,1554,405"><Run Text="Pause"/></TextBlock>
+        <Button x:Name="startBtn" Grid.ColumnSpan="5" Margin="544,494,475,208" RenderTransformOrigin="0.5,0.5" Click="startBtn_Click" Content="StartBtn" >
             <Button.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
@@ -33,10 +35,12 @@
 
         </Button>
 
-
-        <Canvas Grid.ColumnSpan="4" Margin="0,0,-0.4,0.4">
+        <Canvas Grid.ColumnSpan="5">
             <Button x:Name="pausebtn" Content="Pause" Canvas.Left="541" Canvas.Top="256" Width="532" Height="191"/>
             <TextBlock x:Name="Touch" TextWrapping="Wrap" Text="touch" Canvas.Top="432" Height="383" Width="145"/>
+            <Border x:Name="TimerBorder" BorderBrush="Black" BorderThickness="3" Height="42" Canvas.Left="1222" Canvas.Top="10" Width="144" CornerRadius="8">
+                <TextBox x:Name="GameTimer" Canvas.Left="1090" TextWrapping="Wrap" Text="Timer" Canvas.Top="-42" TextAlignment="Center" Background="White" FontSize="25" BorderBrush="{x:Null}" BorderThickness="3" Margin="7,0,7,-3" FontWeight="Bold" FontFamily="Showcard Gothic" />
+            </Border>
         </Canvas>
     </Grid>
 </Window>
