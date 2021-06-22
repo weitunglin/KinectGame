@@ -62,7 +62,7 @@ namespace KinectGame
             this.sensor.Open();
 
 
-            this.game = new Game(this.ImageCanvas, this.ImageSource.Width, this.ImageSource.Height, 150, GameTimer);
+            this.game = new Game(this.ImageCanvas, this.ImageSource.Width, this.ImageSource.Height, 150, this);
             DEBUGMODE = true;
         }
 

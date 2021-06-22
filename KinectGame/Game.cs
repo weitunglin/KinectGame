@@ -32,7 +32,7 @@ namespace KinectGame {
         private double imageSourceHeight;
         private double imageSourceBoarder;
         private List<BaseObject> objects = null;
-        private TextBox GameTimer = null;
+        private MainWindow GameWindow = null;
         private int PlayerHealth;
         private int PlayerScore;
         public int TotalTime;
@@ -51,14 +51,14 @@ namespace KinectGame {
             }
         }
 
-        public Game(Canvas c, double sourceWidth, double sourceHeight, double sourceBoarder, TextBox _GameTimer)
+        public Game(Canvas c, double sourceWidth, double sourceHeight, double sourceBoarder, MainWindow _GameWindow)
         {
             this.canvas = c;
             this.random = new Random();
             this.imageSourceHeight = sourceHeight;
             this.imageSourceWidth = sourceWidth;
             this.imageSourceBoarder = sourceBoarder;
-            this.GameTimer = _GameTimer;
+            this.GameWindow = _GameWindow;
             this.objects = new List<BaseObject>();
             this.PlayerScore = 0;
             this.PlayerHealth = 3;
@@ -189,12 +189,12 @@ namespace KinectGame {
             }
             else if (TotalTime <= 10)
             {
-                GameTimer.Foreground = Brushes.Red;
-                GameTimer.Text = Minutes.ToString() + ":" + Seconds.ToString();
+                GameWindow.GameTimer.Foreground = Brushes.Red;
+                GameWindow.GameTimer.Text = Minutes.ToString() + ":" + Seconds.ToString();
             }
             else
             {
-                GameTimer.Text = Minutes.ToString() + ":" + Seconds.ToString();
+                GameWindow.GameTimer.Text = Minutes.ToString() + ":" + Seconds.ToString();
             }
 
         }
@@ -230,6 +230,8 @@ namespace KinectGame {
                     PlayerHealth = 0;
                     endGame();
                 }
+                GameWindow.Health_bar.Value = PlayerHealth;
+                GameWindow.Score_Text.Text = PlayerScore.ToString();
             }
         }
 
@@ -238,7 +240,7 @@ namespace KinectGame {
             dt.Stop();
             timer.Stop();
             canvas.Children.Clear();
-            GameTimer.Text = "Timeout";
+            GameWindow.GameTimer.Text = "Timeout";
             gameStatus = GameStatus.GameOver;
         }
     }

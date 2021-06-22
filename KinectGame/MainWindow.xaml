@@ -45,6 +45,8 @@
             </Border>
             <ProgressBar x:Name="Health_bar" Height="42" Canvas.Left="324" Canvas.Top="10" Width="217" Value="2" Padding="6,0,0,0" Foreground="#FFFF3F3F" Background="#FFB67B7B" Maximum="3" Focusable="True"/>
             <TextBox x:Name="Health_text" Height="42" Canvas.Left="206" TextWrapping="Wrap" Text="Health:" Width="113" FontFamily="Showcard Gothic" FontSize="25" Canvas.Top="10" Background="{x:Null}" BorderBrush="{x:Null}"/>
+            <TextBox x:Name="Score_Title" Height="42" Canvas.Left="866" TextWrapping="Wrap" Text="Score:" Width="113" FontFamily="Showcard Gothic" FontSize="25" Canvas.Top="10" Background="{x:Null}" BorderBrush="{x:Null}"/>
+            <TextBox x:Name="Score_Text" Height="42" Canvas.Left="960" TextWrapping="Wrap" Text="0" Width="113" FontFamily="Showcard Gothic" FontSize="25" Canvas.Top="10" Background="{x:Null}" BorderBrush="{x:Null}"/>
         </Canvas>
     </Grid>
 </Window>
