@@ -61,7 +61,6 @@ namespace KinectGame
             this.bitmap = new WriteableBitmap(this.frameDescription.Width, this.frameDescription.Height, 96, 96, PixelFormats.Bgr32, null);
             this.sensor.Open();
 
-
             this.game = new Game(this.ImageCanvas, this.ImageSource.Width, this.ImageSource.Height, 150, this);
             DEBUGMODE = true;
         }
@@ -97,7 +96,7 @@ namespace KinectGame
 
                     if (game.GetStatus() == GameStatus.Pause)
                     {
-                        pausebtn.Visibility = Visibility.Visible;
+                        pauseText.Visibility = Visibility.Visible;
                     }
 
                 }
@@ -156,7 +155,7 @@ namespace KinectGame
                         gameStatus = GameStatus.NotStartYet;
                         game.StartGame();
                         gameStatus = GameStatus.Gaming;
-                        pausebtn.Visibility = Visibility.Hidden;
+                        pauseText.Visibility = Visibility.Hidden;
                     }
                 }
 
@@ -223,7 +222,7 @@ namespace KinectGame
         private void Kinect_Class2_Loaded(object sender, RoutedEventArgs e)
         {
             this.ImageSource.Source = this.bitmap;
-            pausebtn.Visibility = Visibility.Hidden;
+            pauseText.Visibility = Visibility.Hidden;
         }
 
         private void Kinect_Class2_Unloaded(object sender, RoutedEventArgs e)
