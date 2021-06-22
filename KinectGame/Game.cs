@@ -23,7 +23,6 @@ namespace KinectGame {
         private double imageSourceWidth;
         private double imageSourceHeight;
         private List<BaseObject> objects = null;
-        
 
         public Game(Canvas c, double sourceWidth, double sourceHeight)
         {

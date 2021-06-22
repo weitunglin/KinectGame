@@ -124,21 +124,13 @@ namespace KinectGame
                     return;
 
                 }
-
-
-
-
+                
                 List<BaseObject> objects = game.getObjects();
-
-
 
                 const int lefthand = 9;
                 const int righthand = 6;
 
-
                 add_to_list(body);
-
-
                 txtLeft.Text = pos[lefthand].X.ToString() + "\n" + pos[lefthand].Y.ToString() + "\n";
                 txtRight.Text = pos[righthand].X.ToString() + "\n" + pos[righthand].Y.ToString() + "\n" /*+ pos[6].X.ToString() + "\n" + pos[6].Y.ToString()*/;
                 SpineShoulderDepthTxt.Text = SpineShoudler.ToString();
@@ -162,7 +154,6 @@ namespace KinectGame
 
                 for (int i = 0; i < objects.Count && !objects[i].IsTouched; i++)
                 {
-
                     if (SQR_Distance(pos[righthand], objects[i].Position) <= 100)
                     {
                         objects[i].IsTouched = true;
