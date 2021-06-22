@@ -85,9 +85,11 @@ namespace KinectGame {
             canvas.Children.Add(image);
             double X = pos.X * 1280.0 / 1920.0;
             double Y = pos.Y * 720.0 / 1080.0;
-            if (0 < X && X < this.imageSourceWidth)
+            double marginX = 1280.0 / 10;
+            double marginY = 720.0 / 10;
+            if (marginX < X && X < this.imageSourceWidth - marginX)
             {
-                if (0 < Y && Y < this.imageSourceHeight)
+                if (marginY < Y && Y < this.imageSourceHeight - marginY)
                 {
                     Canvas.SetLeft(image, X);
                     Canvas.SetTop(image, Y);

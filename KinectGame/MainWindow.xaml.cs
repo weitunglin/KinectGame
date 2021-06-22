@@ -60,7 +60,6 @@ namespace KinectGame
             this.sensor.Open();
 
             this.game = new Game(this.ImageCanvas, this.ImageSource.Width, this.ImageSource.Height);
-            
         }
 
         private void ColorFrameReader_FrameArrived(object sender, ColorFrameArrivedEventArgs e)
