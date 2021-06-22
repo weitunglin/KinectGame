@@ -39,7 +39,7 @@ namespace KinectGame
 
         private float SpineShoudler = new float();
 
-        private GameStatus gameStatus = GameStatus.NotStartYet;
+        
         Ellipse Circle = new Ellipse();
         BrushConverter bc = new BrushConverter();
       
@@ -91,7 +91,7 @@ namespace KinectGame
                     //    gamestatus = GameStatus.GameOver;
                     //}
 
-                    if (gameStatus == GameStatus.Pause)
+                    if (game.GetStatus() == GameStatus.Pause)
                     {
                         pausebtn.Visibility = Visibility.Visible;
                     }
@@ -168,7 +168,7 @@ namespace KinectGame
                         objects[i].IsTouched = true;
                         Debug.WriteLine(objects[i].Id + "is touched by righthand");
                         Debug.WriteLine(objects[i].Position.ToString() + " " + pos[righthand].X.ToString() + pos[righthand].Y.ToString());
-
+                        game.ObjectTouched(objects[i], TouchPartEnum.rightHand);
                         continue;
                     }
                     else if (SQR_Distance(pos[lefthand], objects[i].Position) <= 100)
@@ -176,7 +176,7 @@ namespace KinectGame
                         objects[i].IsTouched = true;
                         Debug.WriteLine(objects[i].Id + "is touched by lefthand");
                         Debug.WriteLine(objects[i].Position.ToString() + " " + pos[lefthand].X.ToString() + pos[lefthand].Y.ToString());
-
+                        game.ObjectTouched(objects[i], TouchPartEnum.leftHand);
                         continue;
                     }
                     for (int j = 0; j < pos.Count; j++)
@@ -186,6 +186,7 @@ namespace KinectGame
                             objects[i].IsTouched = true;
                             Debug.WriteLine(objects[i].Id + "is touched by " + j);
                             Debug.WriteLine(objects[i].Position.ToString() + " " + pos[j].X.ToString() + pos[j].Y.ToString());
+                            game.ObjectTouched(objects[i], TouchPartEnum.Other);
                             break;
                         }
                     }
@@ -311,18 +312,18 @@ namespace KinectGame
 
         private void startBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (gameStatus == GameStatus.NotStartYet)
+            if (game.GetStatus() == GameStatus.NotStartYet)
             {
-                game.StartGame(gameStatus);
+                game.StartGame();
                 //  startBtn.Content = "Pause";
                 startBtn.Visibility = Visibility.Hidden;
-                gameStatus = GameStatus.Gaming;
+                game.SetStatus(GameStatus.Gaming);
             }
-            else if (gameStatus == GameStatus.Gaming)
+            else if (game.GetStatus() == GameStatus.Gaming)
             {
-                game.StartGame(gameStatus);
+                game.StartGame();
                 startBtn.Content = "Start";
-                gameStatus = GameStatus.NotStartYet;
+                game.SetStatus(GameStatus.NotStartYet);
             }
 
 
