@@ -347,7 +347,6 @@ namespace KinectGame
 
             }
 
-
         }
     }
 }
