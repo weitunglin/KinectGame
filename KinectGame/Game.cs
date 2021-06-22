@@ -160,6 +160,7 @@ namespace KinectGame {
                 timer.Stop();
                 canvas.Children.Clear();
                 GameTimer.Text = "Timeout";
+                
             }
             else if (TotalTime <= 10)
             {
@@ -184,6 +185,7 @@ namespace KinectGame {
             {
                 canvas.Children.Clear();
                 timer.Stop();
+                dt.Stop();
             }
         }
     }
