@@ -16,7 +16,14 @@ namespace KinectGame {
         Pause,
         GameOver
     }
+    public enum TouchPartEnum
+    {
+        rightHand,
+        leftHand,
+        Other
+    }
     public class Game {
+        private GameStatus gameStatus = GameStatus.NotStartYet;
         private Random random = null;
         private Canvas canvas = null;
         private DispatcherTimer timer = null;
@@ -44,7 +51,6 @@ namespace KinectGame {
             }
         }
 
-
         public Game(Canvas c, double sourceWidth, double sourceHeight, double sourceBoarder, TextBox _GameTimer)
         {
             this.canvas = c;
@@ -54,6 +60,8 @@ namespace KinectGame {
             this.imageSourceBoarder = sourceBoarder;
             this.GameTimer = _GameTimer;
             this.objects = new List<BaseObject>();
+            this.PlayerScore = 0;
+            this.PlayerHealth = 3;
 
             timer = new DispatcherTimer();
             timer.Tick += new EventHandler(randomObjects);
@@ -67,6 +75,26 @@ namespace KinectGame {
         public List<BaseObject> getObjects()
         {
             return objects;
+        }
+
+        public GameStatus GetStatus()
+        {
+            return gameStatus;
+        }
+
+        public void SetStatus(GameStatus NewStatus)
+        {
+            this.gameStatus = NewStatus;
+        }
+
+        public int GetPlayerHealth()
+        {
+            return this.PlayerHealth;
+        }
+
+        public int GetPlayerScore()
+        {
+            return this.PlayerScore;
         }
 
         private void randomObjects(Object source, EventArgs e)
@@ -156,11 +184,8 @@ namespace KinectGame {
             TotalTime--;
             if (TotalTime <= 0)
             {
-                dt.Stop();
-                timer.Stop();
-                canvas.Children.Clear();
-                GameTimer.Text = "Timeout";
-                
+
+                endGame();
             }
             else if (TotalTime <= 10)
             {
@@ -174,7 +199,7 @@ namespace KinectGame {
 
         }
 
-        public void StartGame(GameStatus gameStatus)
+        public void StartGame()
         {
             if (gameStatus == GameStatus.NotStartYet)
             {
@@ -187,6 +212,34 @@ namespace KinectGame {
                 timer.Stop();
                 dt.Stop();
             }
+        }
+
+        public void ObjectTouched(BaseObject TouchedObj, TouchPartEnum TouchPart)
+        {
+            if (TouchPart != TouchPartEnum.Other)
+            {
+                PlayerScore += TouchedObj.Credit;
+                PlayerHealth += TouchedObj.Heart;
+                if (PlayerHealth >= 3)
+                {
+                    PlayerHealth = 3;
+                    PlayerScore += 3; // over health score
+                }
+                else if (PlayerHealth <= 0)
+                {
+                    PlayerHealth = 0;
+                    endGame();
+                }
+            }
+        }
+
+        private void endGame()
+        {
+            dt.Stop();
+            timer.Stop();
+            canvas.Children.Clear();
+            GameTimer.Text = "Timeout";
+            gameStatus = GameStatus.GameOver;
         }
     }
 }

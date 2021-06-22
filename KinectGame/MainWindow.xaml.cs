@@ -39,9 +39,12 @@ namespace KinectGame
 
         private float SpineShoudler = new float();
 
+
         private GameStatus gameStatus = GameStatus.NotStartYet;
 
+
         private bool DEBUGMODE;
+
 
         public MainWindow()
         {
@@ -92,7 +95,7 @@ namespace KinectGame
                     //    gamestatus = GameStatus.GameOver;
                     //}
 
-                    if (gameStatus == GameStatus.Pause)
+                    if (game.GetStatus() == GameStatus.Pause)
                     {
                         pausebtn.Visibility = Visibility.Visible;
                     }
@@ -175,30 +178,41 @@ namespace KinectGame
                     {
                         objects[i].IsTouched = true;
                         Debug.WriteLine(objects[i].Id + "is touched by righthand");
-                        Debug.WriteLine(objects[i].Position.ToString() + " " + pos[righthand].X.ToString() + " " + pos[righthand].Y.ToString());
+
+                        Debug.WriteLine(objects[i].Position.ToString() + " " + pos[righthand].X.ToString() + pos[righthand].Y.ToString());
+                        game.ObjectTouched(objects[i], TouchPartEnum.rightHand);
+
                         if (DEBUGMODE) { Touch.Text = objects[i].Type + "is touched by righthand"; }
+
                         continue;
                     }
                     else if (SQR_Distance(pos[lefthand], objects[i].Position) <= 100)
                     {
                         objects[i].IsTouched = true;
                         Debug.WriteLine(objects[i].Id + "is touched by lefthand");
-                        Debug.WriteLine(objects[i].Position.ToString() + " " + pos[lefthand].X.ToString() + " " + pos[lefthand].Y.ToString());
+
+                        Debug.WriteLine(objects[i].Position.ToString() + " " + pos[lefthand].X.ToString() + pos[lefthand].Y.ToString());
+                        game.ObjectTouched(objects[i], TouchPartEnum.leftHand);
+
 
                         if (DEBUGMODE) { Touch.Text = objects[i].Type + "is touched by lefthand"; }
+
 
                         continue;
                     }
                         for (int j = 0; j < pos.Count; j++)
                         {
+
                             if (SQR_Distance(pos[j], objects[i].Position) <= 100)
                             {
                                 objects[i].IsTouched = true;
                                 Debug.WriteLine(objects[i].Id + "is touched by " + j);
                                 Debug.WriteLine(objects[i].Position.ToString() + " " + pos[j].X.ToString() + " " + pos[j].Y.ToString());
                                 if (DEBUGMODE) { Touch.Text = objects[i].Type + "is touched by " + j; }
+                                 game.ObjectTouched(objects[i], TouchPartEnum.Other);
                                 break;
                             }
+
                         }
                     }
                 }
@@ -226,6 +240,7 @@ namespace KinectGame
                     this.sensor = null;
                 }
             }
+
 
             private double SQR_Distance(ColorSpacePoint a, Point b)
             {
@@ -312,24 +327,25 @@ namespace KinectGame
                 pos.Add(leftknee_pos);
                 pos.Add(leftankel_pos);
                 pos.Add(leftfoot_pos);
-            }
 
-            private void startBtn_Click(object sender, RoutedEventArgs e)
+        private void startBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (game.GetStatus() == GameStatus.NotStartYet)
             {
-                if (gameStatus == GameStatus.NotStartYet)
-                {
-                    game.StartGame(gameStatus);
-                    startBtn.Visibility = Visibility.Hidden;
-                    gameStatus = GameStatus.Gaming;
-                }
-                else if (gameStatus == GameStatus.Gaming)
-                {
-                    game.StartGame(gameStatus);
-                    startBtn.Content = "Start";
-                    gameStatus = GameStatus.NotStartYet;
-                }
 
+                game.StartGame();
+                //  startBtn.Content = "Pause";
 
+                startBtn.Visibility = Visibility.Hidden;
+                game.SetStatus(GameStatus.Gaming);
             }
+            else if (game.GetStatus() == GameStatus.Gaming)
+            {
+                game.StartGame();
+                startBtn.Content = "Start";
+                
+            }
+
+            
         }
     }
