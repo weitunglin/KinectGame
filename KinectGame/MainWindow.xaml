@@ -15,15 +15,15 @@
             <ColumnDefinition Width="0*"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <RichTextBox x:Name="pauseRichText"></RichTextBox>
 
         <Image x:Name="ImageSource" HorizontalAlignment="Left" Height="720" Margin="143,51,0,0" VerticalAlignment="Top" Width="1280" Grid.ColumnSpan="5"/>
 
         <Canvas x:Name="ImageCanvas"  HorizontalAlignment="Left" Height="720" Margin="148,51,0,0" VerticalAlignment="Top" Width="1280" Background="Transparent" Grid.ColumnSpan="5">
         </Canvas>
         <Canvas Grid.ColumnSpan="5">
-            <Image x:Name="BackgroundImage" Height="871" Width="1554" Source="background.jpeg"/>
-            <TextBox x:Name="pauseText" Text="Please stand a little bit further!" Canvas.Left="513" Canvas.Top="362" Width="597" Height="191" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="30" FontFamily="Showcard Gothic" BorderBrush="Black" Background="#FFFFA0A0" BorderThickness="5"/>
+            <Image x:Name="BackgroundImage" Height="871" Width="1554"/>
+            <RichTextBox x:Name="pauseTextBox" Canvas.Left="501" Width="610" Height="180" BorderBrush="Black" BorderThickness="5" Background="LightSalmon" Canvas.Top="325" Visibility="Hidden"/>
+            <TextBox x:Name="pauseText" Text="Please stand a little bit further!" Canvas.Left="513" Canvas.Top="362" Width="597" Height="191" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="30" FontFamily="Showcard Gothic" BorderBrush="Black" Background="#FFFFA0A0" BorderThickness="5" Visibility="Hidden"/>
             <TextBlock x:Name="Touch" TextWrapping="Wrap" Canvas.Top="432" Height="383" Width="145"/>
             <Border x:Name="TimerBorder" BorderBrush="Black" BorderThickness="3" Height="42" Canvas.Left="1222" Width="144" CornerRadius="8">
                 <TextBox x:Name="GameTimer" Canvas.Left="1090" TextWrapping="Wrap" Text="Timer" Canvas.Top="-42" TextAlignment="Center" Background="White" FontSize="25" BorderBrush="{x:Null}" BorderThickness="3" Margin="7,0,7,-3" FontWeight="Bold" FontFamily="Showcard Gothic" />
