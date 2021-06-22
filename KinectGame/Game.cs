@@ -71,9 +71,10 @@ namespace KinectGame {
 
                 Image image = new Image
                 {
-                    Width = 100,
-                    Height = 100,
+                    Width = 200,
+                    Height = 200,
                     Source = new BitmapImage(item.ImageUri)
+    
                 };
                 addObjectToCanvas(item.Position, image);
                 objects.Add(item);

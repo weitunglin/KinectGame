@@ -19,7 +19,6 @@
         <TextBlock x:Name="txtLeft" Height="60" Margin="10,74,1410.6,736.4" Grid.ColumnSpan="4"><Run Text="txt left"/></TextBlock>
         <TextBlock x:Name="txtRight" Height="60" Margin="10,139,1410.6,671.4" Grid.ColumnSpan="4"><Run Text="txt right"/></TextBlock>
         <TextBlock x:Name="SpineShoulderDepthTxt" Height="60" Margin="10,260,1410.6,550.4" Grid.ColumnSpan="4"><Run Text="spineshoudlerDepth"/></TextBlock>
-        <TextBlock x:Name="Pause" Height="60"><Run Text="Pause"/></TextBlock>
         <Button x:Name="startBtn" Grid.ColumnSpan="4" Margin="544,494,474.6,208.4" RenderTransformOrigin="0.5,0.5" Click="startBtn_Click" Content="StartBtn" >
             <Button.RenderTransform>
                 <TransformGroup>
