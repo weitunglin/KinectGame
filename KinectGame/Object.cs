@@ -45,7 +45,7 @@ namespace KinectGame {
         {
             Credit = 5;
             Heart = 0;
-            ImageUri = new Uri(new Uri(AppDomain.CurrentDomain.BaseDirectory), "../../../Source/bubble.jpeg");
+            ImageUri = new Uri(new Uri(AppDomain.CurrentDomain.BaseDirectory), "../../../Source/bubble.png");
         }
     }
 

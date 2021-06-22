@@ -37,9 +37,12 @@ namespace KinectGame
 
         private List<ColorSpacePoint> pos = new List<ColorSpacePoint>();
 
-        private DepthSpacePoint SpineShoudler = new DepthSpacePoint();
+        private float SpineShoudler = new float();
 
         private GameStatus gameStatus = GameStatus.NotStartYet;
+        Ellipse Circle = new Ellipse();
+        BrushConverter bc = new BrushConverter();
+      
 
         public MainWindow()
         {
@@ -56,8 +59,8 @@ namespace KinectGame
             this.bitmap = new WriteableBitmap(this.frameDescription.Width, this.frameDescription.Height, 96, 96, PixelFormats.Bgr32, null);
             this.sensor.Open();
 
-		    this.game = new Game(this.ImageCanvas, this.ImageSource.Width, this.ImageSource.Height);
-           
+            this.game = new Game(this.ImageCanvas, this.ImageSource.Width, this.ImageSource.Height);
+            
         }
 
         private void ColorFrameReader_FrameArrived(object sender, ColorFrameArrivedEventArgs e)
@@ -89,7 +92,7 @@ namespace KinectGame
                     //    gamestatus = GameStatus.GameOver;
                     //}
 
-                    if(gamestatus == GameStatus.Pause)
+                    if (gameStatus == GameStatus.Pause)
                     {
                         pausebtn.Visibility = Visibility.Visible;
                     }
@@ -120,51 +123,73 @@ namespace KinectGame
                 {
                     txtLeft.Text = "No body";
                     return;
-                    
+
                 }
 
-               
-                
+
+
 
                 List<BaseObject> objects = game.getObjects();
 
 
 
-                const int  lefthand = 9;
+                const int lefthand = 9;
                 const int righthand = 6;
 
 
                 add_to_list(body);
 
-                
+
                 txtLeft.Text = pos[lefthand].X.ToString() + "\n" + pos[lefthand].Y.ToString() + "\n";
                 txtRight.Text = pos[righthand].X.ToString() + "\n" + pos[righthand].Y.ToString() + "\n" /*+ pos[6].X.ToString() + "\n" + pos[6].Y.ToString()*/;
-                SpineShoulderDepthTxt.Text = SpineShoudler.X.ToString() + "\n" + SpineShoudler.Y.ToString() + "\n"; 
+                SpineShoulderDepthTxt.Text = SpineShoudler.ToString();
 
-               //draw circle test
-                if (!float.IsInfinity(pos[lefthand].Y) && (!float.IsInfinity(pos[lefthand].X))){
-                 //   Canvas.SetTop(Circle, pos[lefthand].Y - 200);
-                 //   Canvas.SetLeft(Circle, pos[lefthand].X - 200);
-                }
-
-
-                if(SpineShoudler.X <= 200)
+                //draw circle test
+                if (!float.IsInfinity(pos[lefthand].Y) && (!float.IsInfinity(pos[lefthand].X)))
                 {
-                    gamestatus = GameStatus.Pause;
+
+                    Circle.Visibility = Visibility.Visible;
+                    Canvas.SetTop(Circle, pos[lefthand].Y - 200);
+                    Canvas.SetLeft(Circle, pos[lefthand].X - 200);
                 }
+
+
+                if (SpineShoudler <= 1.5)
+                {
+                    //    gameStatus = GameStatus.Pause;
+                }
+
 
 
                 for (int i = 0; i < objects.Count && !objects[i].IsTouched; i++)
                 {
-                   for (int j = 0; j < pos.Count; j++)
-                   {
-                       if (SQR_Distance(pos[j], objects[i].Position) <= 10)
-                       {
-                           objects[i].IsTouched = true;
-                            Debug.WriteLine(objects[i].Id + "is touched");
+
+                    if (SQR_Distance(pos[righthand], objects[i].Position) <= 100)
+                    {
+                        objects[i].IsTouched = true;
+                        Debug.WriteLine(objects[i].Id + "is touched by righthand");
+                        Debug.WriteLine(objects[i].Position.ToString() + " " + pos[righthand].X.ToString() + pos[righthand].Y.ToString());
+
+                        continue;
+                    }
+                    else if (SQR_Distance(pos[lefthand], objects[i].Position) <= 100)
+                    {
+                        objects[i].IsTouched = true;
+                        Debug.WriteLine(objects[i].Id + "is touched by lefthand");
+                        Debug.WriteLine(objects[i].Position.ToString() + " " + pos[lefthand].X.ToString() + pos[lefthand].Y.ToString());
+
+                        continue;
+                    }
+                    for (int j = 0; j < pos.Count; j++)
+                    {
+                        if (SQR_Distance(pos[j], objects[i].Position) <= 100)
+                        {
+                            objects[i].IsTouched = true;
+                            Debug.WriteLine(objects[i].Id + "is touched by " + j);
+                            Debug.WriteLine(objects[i].Position.ToString() + " " + pos[j].X.ToString() + pos[j].Y.ToString());
                             break;
-                       }
-                   }
+                        }
+                    }
                 }
             }
         }
@@ -175,6 +200,12 @@ namespace KinectGame
         {
             this.ImageSource.Source = this.bitmap;
             pausebtn.Visibility = Visibility.Hidden;
+            Brush brush = (Brush)bc.ConvertFrom("Red");
+            Circle.Fill = new SolidColorBrush(Colors.Red);
+            Circle.Width = 600;
+            Circle.Height = 600;
+            Canvas.SetLeft(Circle, 100);
+            Canvas.SetTop(Circle, 100);
         }
 
         private void Kinect_Class2_Unloaded(object sender, RoutedEventArgs e)
@@ -197,7 +228,7 @@ namespace KinectGame
             return Math.Sqrt((a.X * a.X) - (b.X * b.X) + (a.Y) * (a.Y) - (b.Y) * (b.Y));
         }
 
-        private void add_to_list( Body body)
+        private void add_to_list(Body body)
         {
             pos.Clear();
 
@@ -216,7 +247,7 @@ namespace KinectGame
             ColorSpacePoint lefthip_pos = sensor.CoordinateMapper.MapCameraPointToColorSpace(lefthip_);
             ColorSpacePoint righthip_pos = sensor.CoordinateMapper.MapCameraPointToColorSpace(righthip_);
 
-            SpineShoudler = sensor.CoordinateMapper.MapCameraPointToDepthSpace(spineshoulder_);
+            SpineShoudler = body.Joints[JointType.SpineShoulder].Position.Z;
 
             pos.Add(head_pos);
             pos.Add(spineshoulder_pos);
@@ -284,7 +315,8 @@ namespace KinectGame
             if (gameStatus == GameStatus.NotStartYet)
             {
                 game.StartGame(gameStatus);
-                startBtn.Content = "Pause";
+                //  startBtn.Content = "Pause";
+                startBtn.Visibility = Visibility.Hidden;
                 gameStatus = GameStatus.Gaming;
             }
             else if (gameStatus == GameStatus.Gaming)
