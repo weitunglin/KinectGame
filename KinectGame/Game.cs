@@ -26,6 +26,8 @@ namespace KinectGame {
         private double imageSourceBoarder;
         private List<BaseObject> objects = null;
         private TextBox GameTimer = null;
+        private int PlayerHealth;
+        private int PlayerScore;
         public int TotalTime;
         private int Minutes
         {
