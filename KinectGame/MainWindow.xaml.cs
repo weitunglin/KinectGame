@@ -63,6 +63,8 @@ namespace KinectGame
 
             this.game = new Game(this.ImageCanvas, this.ImageSource.Width, this.ImageSource.Height, 150, this);
             DEBUGMODE = true;
+            startBtn_Image.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "../../../Source/start.png"));
+            BackgroundImage.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "../../../Source/background.jpeg"));
         }
 
         private void ColorFrameReader_FrameArrived(object sender, ColorFrameArrivedEventArgs e)
@@ -334,6 +336,7 @@ namespace KinectGame
             {
 
                 game.StartGame();
+                BackgroundImage.Source = null;
                 //  startBtn.Content = "Pause";
 
                 startBtn.Visibility = Visibility.Hidden;
@@ -346,6 +349,16 @@ namespace KinectGame
 
             }
 
+        }
+
+        private void startBtn_MouseEnter(object sender, MouseEventArgs e)
+        {
+            startBtn_Image.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "../../../Source/ystart.png"));
+        }
+
+        private void startBtn_MouseLeave(object sender, MouseEventArgs e)
+        {
+            startBtn_Image.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "../../../Source/start.png"));
         }
     }
 }

@@ -16,28 +16,13 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <RichTextBox x:Name="pauseRichText"></RichTextBox>
+
         <Image x:Name="ImageSource" HorizontalAlignment="Left" Height="720" Margin="143,51,0,0" VerticalAlignment="Top" Width="1280" Grid.ColumnSpan="5"/>
+
         <Canvas x:Name="ImageCanvas"  HorizontalAlignment="Left" Height="720" Margin="148,51,0,0" VerticalAlignment="Top" Width="1280" Background="Transparent" Grid.ColumnSpan="5">
         </Canvas>
-        <TextBlock x:Name="txtLeft" Height="60" Margin="10,74,1410,737" Grid.ColumnSpan="5"></TextBlock>
-        <TextBlock x:Name="txtRight" Height="60" Margin="10,139,1410,672" Grid.ColumnSpan="5"></TextBlock>
-        <TextBlock x:Name="SpineShoulderDepthTxt" Height="60" Margin="10,260,1410,551" Grid.ColumnSpan="5"></TextBlock>
-        <TextBlock x:Name="Pause" Height="60" Grid.ColumnSpan="5" Margin="0,406,1554,405"><Run Text="Pause"/></TextBlock>
-        <Button x:Name="startBtn" Grid.ColumnSpan="5" Margin="544,494,475,208" RenderTransformOrigin="0.5,0.5" Click="startBtn_Click" Content="StartBtn" >
-
-            <Button.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform/>
-                    <SkewTransform/>
-                    <RotateTransform Angle="0.012"/>
-                    <TranslateTransform/>
-                </TransformGroup>
-
-            </Button.RenderTransform>
-
-        </Button>
-
         <Canvas Grid.ColumnSpan="5">
+            <Image x:Name="BackgroundImage" Height="871" Width="1554" Source="background.jpeg"/>
             <TextBox x:Name="pauseText" Text="Please stand a little bit further!" Canvas.Left="513" Canvas.Top="362" Width="597" Height="191" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="30" FontFamily="Showcard Gothic" BorderBrush="Black" Background="#FFFFA0A0" BorderThickness="5"/>
             <TextBlock x:Name="Touch" TextWrapping="Wrap" Canvas.Top="432" Height="383" Width="145"/>
             <Border x:Name="TimerBorder" BorderBrush="Black" BorderThickness="3" Height="42" Canvas.Left="1222" Width="144" CornerRadius="8">
@@ -48,5 +33,21 @@
             <TextBox x:Name="Score_Title" Height="42" Canvas.Left="866" TextWrapping="Wrap" Text="Score:" Width="113" FontFamily="Showcard Gothic" FontSize="25" Canvas.Top="5" Background="{x:Null}" BorderBrush="{x:Null}"/>
             <TextBox x:Name="Score_Text" Height="42" Canvas.Left="960" TextWrapping="Wrap" Text="0" Width="113" FontFamily="Showcard Gothic" FontSize="25" Canvas.Top="5" Background="{x:Null}" BorderBrush="{x:Null}"/>
         </Canvas>
+        <TextBlock x:Name="txtLeft" Height="60" Margin="10,74,1410,737" Grid.ColumnSpan="5"></TextBlock>
+        <TextBlock x:Name="txtRight" Height="60" Margin="10,139,1410,672" Grid.ColumnSpan="5"></TextBlock>
+        <TextBlock x:Name="SpineShoulderDepthTxt" Height="60" Margin="10,260,1410,551" Grid.ColumnSpan="5"></TextBlock>
+        <TextBlock x:Name="Pause" Height="60" Grid.ColumnSpan="5" Margin="0,406,1554,405"><Run Text="Pause"/></TextBlock>
+        <Button x:Name="startBtn" Grid.ColumnSpan="5" Margin="544,494,475,208" RenderTransformOrigin="0.5,0.5" Click="startBtn_Click" BorderThickness="0" Background="#00DDDDDD" MouseEnter="startBtn_MouseEnter" MouseLeave="startBtn_MouseLeave" >
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="0.012"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+
+            </Button.RenderTransform>
+            <Image x:Name="startBtn_Image" Height="168" Width="533" Stretch="Fill"/>
+        </Button>
     </Grid>
 </Window>
