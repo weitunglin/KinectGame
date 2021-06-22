@@ -59,7 +59,7 @@ namespace KinectGame
             this.bitmap = new WriteableBitmap(this.frameDescription.Width, this.frameDescription.Height, 96, 96, PixelFormats.Bgr32, null);
             this.sensor.Open();
 
-            this.game = new Game(this.ImageCanvas, this.ImageSource.Width, this.ImageSource.Height);
+            this.game = new Game(this.ImageCanvas, this.ImageSource.Width, this.ImageSource.Height, 150);
         }
 
         private void ColorFrameReader_FrameArrived(object sender, ColorFrameArrivedEventArgs e)

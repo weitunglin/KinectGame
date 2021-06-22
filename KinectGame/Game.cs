@@ -22,16 +22,17 @@ namespace KinectGame {
         private DispatcherTimer timer = null;
         private double imageSourceWidth;
         private double imageSourceHeight;
+        private double imageSourceBoarder;
         private List<BaseObject> objects = null;
         
 
-        public Game(Canvas c, double sourceWidth, double sourceHeight)
+        public Game(Canvas c, double sourceWidth, double sourceHeight, double sourceBoarder)
         {
             this.canvas = c;
             this.random = new Random();
             this.imageSourceHeight = sourceHeight;
             this.imageSourceWidth = sourceWidth;
-
+            this.imageSourceBoarder = sourceBoarder;
             this.objects = new List<BaseObject>();
 
             timer = new DispatcherTimer();
@@ -52,12 +53,27 @@ namespace KinectGame {
 
             for (int i = 0; i < objectNum; ++i)
             {
-                int type = random.Next(0, 2);
-                int x = random.Next(0, 1920);
-                int y = random.Next(0, 1080);
+                int type = random.Next(0, 4);
+                int x = 0;
+                int y = 0;
                 string id = Guid.NewGuid().ToString();
-
                 BaseObject item = null;
+
+                bool NoDuplicate = false;
+                while(!NoDuplicate)
+                {
+                    x = random.Next(0, 1920 - 192);
+                    y = random.Next(0, 1080 - 108);
+                    NoDuplicate = true;
+                    foreach (BaseObject PositionCheck in objects)
+                    {
+                        Console.WriteLine(x.ToString() + " , " + y.ToString() + " / " + PositionCheck.Position.X.ToString() + " , " + PositionCheck.Position.Y.ToString());
+                        if (x >= PositionCheck.Position.X - imageSourceBoarder && x <= PositionCheck.Position.X + 100 + imageSourceBoarder && y >= PositionCheck.Position.Y - imageSourceBoarder && y <= PositionCheck.Position.Y + 100 + imageSourceBoarder)
+                        {
+                            NoDuplicate = false;
+                        }
+                    }
+                }
 
                 switch (type)
                 {
@@ -67,32 +83,44 @@ namespace KinectGame {
                     case 1:
                         item = new Bubble(id, new Point(x, y), false);
                         break;
+                    case 2:
+                        item = new Bomb(id, new Point(x, y), false);
+                        break;
+                    case 3:
+                        item = new Heart(id, new Point(x, y), false);
+                        break;
                 }
 
                 Image image = new Image
                 {
                     Width = 100,
                     Height = 100,
+                    Stretch = Stretch.Uniform,
                     Source = new BitmapImage(item.ImageUri)
                 };
-                addObjectToCanvas(item.Position, image);
+                addObjectToCanvas(item, image);
                 objects.Add(item);
             }
         }
 
-        private void addObjectToCanvas(Point pos, Image image)
+        private void addObjectToCanvas(BaseObject item, Image image)
         {
-            canvas.Children.Add(image);
-            double X = pos.X * 1280.0 / 1920.0;
-            double Y = pos.Y * 720.0 / 1080.0;
+            
+            double X = item.Position.X * 1280.0 / 1920.0;
+            double Y = item.Position.Y * 720.0 / 1080.0;
             double marginX = 1280.0 / 10;
             double marginY = 720.0 / 10;
+            Canvas.SetLeft(image, X);
+            Canvas.SetTop(image, Y);
+            item.IsTouched = true;
             if (marginX < X && X < this.imageSourceWidth - marginX)
             {
                 if (marginY < Y && Y < this.imageSourceHeight - marginY)
                 {
+                    item.IsTouched = false;
                     Canvas.SetLeft(image, X);
                     Canvas.SetTop(image, Y);
+                    canvas.Children.Add(image);
                 }
             }
         }
