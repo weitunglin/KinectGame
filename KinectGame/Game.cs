@@ -174,6 +174,7 @@ namespace KinectGame {
             {
                 timer.Start();
                 dt.Start();
+
             } else
             {
                 canvas.Children.Clear();
