@@ -41,6 +41,8 @@
             <Border x:Name="TimerBorder" BorderBrush="Black" BorderThickness="3" Height="42" Canvas.Left="1222" Canvas.Top="10" Width="144" CornerRadius="8">
                 <TextBox x:Name="GameTimer" Canvas.Left="1090" TextWrapping="Wrap" Text="Timer" Canvas.Top="-42" TextAlignment="Center" Background="White" FontSize="25" BorderBrush="{x:Null}" BorderThickness="3" Margin="7,0,7,-3" FontWeight="Bold" FontFamily="Showcard Gothic" />
             </Border>
+            <ProgressBar x:Name="Health_bar" Height="42" Canvas.Left="324" Canvas.Top="10" Width="217" Value="2" Padding="6,0,0,0" Foreground="#FFFF3F3F" Background="#FFB67B7B" Maximum="3" Focusable="True" ValueChanged="Health_bar_ValueChanged"/>
+            <TextBox x:Name="Health_text" Height="42" Canvas.Left="206" TextWrapping="Wrap" Text="Health:" Width="113" TextChanged="TextBox_TextChanged" FontFamily="Showcard Gothic" FontSize="25" Canvas.Top="10" Background="{x:Null}" BorderBrush="{x:Null}"/>
         </Canvas>
     </Grid>
 </Window>
