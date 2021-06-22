@@ -35,7 +35,7 @@ namespace KinectGame {
         {
             Credit = 10; 
             Heart = 0;
-            ImageUri = new Uri(new Uri(AppDomain.CurrentDomain.BaseDirectory), "../../../Source/apple.png");
+            ImageUri = new Uri(AppDomain.CurrentDomain.BaseDirectory + "../../../Source/apple.png");
         }
     }
 
@@ -45,7 +45,7 @@ namespace KinectGame {
         {
             Credit = 5;
             Heart = 0;
-            ImageUri = new Uri(new Uri(AppDomain.CurrentDomain.BaseDirectory), "../../../Source/bubble.png");
+            ImageUri = new Uri(AppDomain.CurrentDomain.BaseDirectory + "../../../Source/bubble.png");
         }
     }
 
@@ -55,6 +55,7 @@ namespace KinectGame {
         {
             Credit = 0;
             Heart = -1;
+            ImageUri = new Uri(AppDomain.CurrentDomain.BaseDirectory + "../../../Source/bomb.png");
         }
     }
 
@@ -64,6 +65,7 @@ namespace KinectGame {
         {
             Credit = 0;
             Heart = 1;
+            ImageUri = new Uri(AppDomain.CurrentDomain.BaseDirectory + "../../../Source/heart.png");
         }
     } 
 }
