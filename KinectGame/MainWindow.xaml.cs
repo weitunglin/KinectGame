@@ -63,6 +63,16 @@ namespace KinectGame
 
             this.game = new Game(this.ImageCanvas, this.ImageSource.Width, this.ImageSource.Height, 150, this);
             DEBUGMODE = true;
+
+            FlowDocument pauseDoc = new FlowDocument();
+            Paragraph pause = new Paragraph();
+            pause.Background = Brushes.LightSalmon;
+            // from allen, do not blame me
+            pause.Inlines.Add(new Run("\n\nPaused\n\n") { FontSize = 26, FontFamily = new FontFamily("Showcard Gothic") });
+            pause.Inlines.Add(new Run("Please stand a little further!") { FontSize = 36, Foreground = Brushes.Red, FontFamily = new FontFamily("Showcard Gothic") });
+            pauseDoc.Blocks.Add(pause);
+            pauseDoc.TextAlignment = TextAlignment.Center;
+            this.pauseTextBox.Document = pauseDoc;
         }
 
         private void ColorFrameReader_FrameArrived(object sender, ColorFrameArrivedEventArgs e)
@@ -96,9 +106,8 @@ namespace KinectGame
 
                     if (game.gameStatus == GameStatus.Pause)
                     {
-                        pauseText.Visibility = Visibility.Visible;
+                        pauseTextBox.Visibility = Visibility.Visible;
                     }
-
                 }
             }
         }
@@ -143,7 +152,7 @@ namespace KinectGame
                         gameStatus = GameStatus.NotStartYet;
                         game.StartGame();
                         gameStatus = GameStatus.Gaming;
-                        pauseText.Visibility = Visibility.Hidden;
+                        pauseTextBox.Visibility = Visibility.Hidden;
                     }
                 }
 
@@ -201,7 +210,7 @@ namespace KinectGame
         private void Kinect_Class2_Loaded(object sender, RoutedEventArgs e)
         {
             this.ImageSource.Source = this.bitmap;
-            pauseText.Visibility = Visibility.Hidden;
+            pauseTextBox.Visibility = Visibility.Visible;
         }
 
         private void Kinect_Class2_Unloaded(object sender, RoutedEventArgs e)
