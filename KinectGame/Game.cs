@@ -16,14 +16,17 @@ namespace KinectGame {
         Pause,
         GameOver
     }
-    public enum TouchPartEnum
+
+    public enum Joint
     {
-        rightHand,
-        leftHand,
-        Other
+        Lefthand = 9,
+        Righthand = 6,
+        RightElbow = 7,
+        Other = -1
     }
+
     public class Game {
-        private GameStatus gameStatus = GameStatus.NotStartYet;
+        public GameStatus gameStatus { get; set; }
         private Random random = null;
         private Canvas canvas = null;
         private DispatcherTimer timer = null;
@@ -33,23 +36,13 @@ namespace KinectGame {
         private double imageSourceBoarder;
         private List<BaseObject> objects = null;
         private MainWindow GameWindow = null;
-        private int PlayerHealth;
-        private int PlayerScore;
+        public int PlayerHealth { get; set; }
+        public int PlayerScore { get; set; }
         public int TotalTime;
-        private int Minutes
-        {
-            get
-            {
-                return TotalTime / 60;
-            }
-        }
-        private int Seconds
-        {
-            get
-            {
-                return TotalTime % 60;
-            }
-        }
+        private int Minutes { get { return TotalTime / 60; } }
+        private int Seconds{ get { return TotalTime % 60; } }
+
+        public List<BaseObject> getObjects() { return objects; }
 
         public Game(Canvas c, double sourceWidth, double sourceHeight, double sourceBoarder, MainWindow _GameWindow)
         {
@@ -62,6 +55,7 @@ namespace KinectGame {
             this.objects = new List<BaseObject>();
             this.PlayerScore = 0;
             this.PlayerHealth = 3;
+            this.gameStatus = GameStatus.NotStartYet;
 
             timer = new DispatcherTimer();
             timer.Tick += new EventHandler(randomObjects);
@@ -70,31 +64,6 @@ namespace KinectGame {
             dt = new DispatcherTimer();
             dt.Interval = new TimeSpan(0, 0, 1);
             dt.Tick += dtTicker;
-        }
-
-        public List<BaseObject> getObjects()
-        {
-            return objects;
-        }
-
-        public GameStatus GetStatus()
-        {
-            return gameStatus;
-        }
-
-        public void SetStatus(GameStatus NewStatus)
-        {
-            this.gameStatus = NewStatus;
-        }
-
-        public int GetPlayerHealth()
-        {
-            return this.PlayerHealth;
-        }
-
-        public int GetPlayerScore()
-        {
-            return this.PlayerScore;
         }
 
         private void randomObjects(Object source, EventArgs e)
@@ -114,8 +83,8 @@ namespace KinectGame {
                 bool NoDuplicate = false;
                 while(!NoDuplicate)
                 {
-                    x = random.Next(0, 1920 - 192);
-                    y = random.Next(0, 1080 - 108);
+                    x = random.Next(192, 1920 - 192 - 100);
+                    y = random.Next(108, 1080 - 108 - 100);
                     NoDuplicate = true;
                     foreach (BaseObject PositionCheck in objects)
                     {
@@ -144,13 +113,10 @@ namespace KinectGame {
 
                 Image image = new Image
                 {
-
                     Width = 100,
                     Height = 100,
                     Stretch = Stretch.Uniform,
-
                     Source = new BitmapImage(item.ImageUri)
-    
                 };
                 addObjectToCanvas(item, image);
                 objects.Add(item);
@@ -159,7 +125,6 @@ namespace KinectGame {
 
         private void addObjectToCanvas(BaseObject item, Image image)
         {
-            
             double X = item.Position.X * 1280.0 / 1920.0;
             double Y = item.Position.Y * 720.0 / 1080.0;
             double marginX = 1280.0 / 10;
@@ -184,7 +149,6 @@ namespace KinectGame {
             TotalTime--;
             if (TotalTime <= 0)
             {
-
                 endGame();
             }
             else if (TotalTime <= 10)
@@ -196,7 +160,6 @@ namespace KinectGame {
             {
                 GameWindow.GameTimer.Text = Minutes.ToString() + ":" + Seconds.ToString();
             }
-
         }
 
         public void StartGame()
@@ -205,7 +168,6 @@ namespace KinectGame {
             {
                 timer.Start();
                 dt.Start();
-
             } else
             {
                 canvas.Children.Clear();
@@ -214,9 +176,9 @@ namespace KinectGame {
             }
         }
 
-        public void ObjectTouched(BaseObject TouchedObj, TouchPartEnum TouchPart)
+        public void ObjectTouched(BaseObject TouchedObj, Joint TouchPart)
         {
-            if (TouchPart != TouchPartEnum.Other)
+            if (TouchPart != Joint.Other)
             {
                 PlayerScore += TouchedObj.Credit;
                 PlayerHealth += TouchedObj.Heart;
