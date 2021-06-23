@@ -49,5 +49,11 @@
             </Button.RenderTransform>
             <Image x:Name="startBtn_Image" Height="168" Width="533" Stretch="Fill"/>
         </Button>
+        <GroupBox x:Name="SumupGroup" Grid.ColumnSpan="5" Header="Total" HorizontalAlignment="Left" Height="194" VerticalAlignment="Top" Width="484" Margin="552,294,0,0" FontFamily="Showcard Gothic" FontSize="25" Background="#FF9E9E00" BorderBrush="#00D5DFE5" BorderThickness="0">
+            <StackPanel HorizontalAlignment="Left" Height="154" Margin="0,0,-2,0" VerticalAlignment="Top" Width="474">
+                <Label x:Name="Sum_Score_Title" Content="Score Sum:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontSize="36"/>
+                <Label x:Name="Sum_Life_Title" Content="Life Left:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontSize="36"/>
+            </StackPanel>
+        </GroupBox>
     </Grid>
 </Window>
