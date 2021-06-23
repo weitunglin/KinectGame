@@ -139,6 +139,7 @@ namespace KinectGame
                     return;
                 }
                 
+                
                 List<BaseObject> objects = game.getObjects();
 
                 
@@ -171,24 +172,24 @@ namespace KinectGame
                     if (SQR_Distance(pos[(int)Joint.Righthand], objects[i].Position) <= 100)
                     {
                         objects[i].IsTouched = true;
-                        Debug.WriteLine(objects[i].Type + "is touched by righthand");
+                        Debug.WriteLine(objects[i].Type + " is touched by righthand");
 
                         Debug.WriteLine(objects[i].Position.ToString() + " " + pos[(int)Joint.Righthand].X.ToString() + pos[(int)Joint.Righthand].Y.ToString());
                         game.ObjectTouched(objects[i], Joint.Righthand);
 
-                        if (DEBUGMODE) { Touch.Text = objects[i].Type + "is touched by righthand"; }
+                        if (DEBUGMODE) { Touch.Text = objects[i].Type + " is touched by righthand"; }
 
                         continue;
                     }
                     else if (SQR_Distance(pos[(int)Joint.Lefthand], objects[i].Position) <= 100)
                     {
                         objects[i].IsTouched = true;
-                        Debug.WriteLine(objects[i].Type + "is touched by lefthand");
+                        Debug.WriteLine(objects[i].Type + " is touched by lefthand");
 
                         Debug.WriteLine(objects[i].Position.ToString() + " " + pos[(int)Joint.Lefthand].X.ToString() + pos[(int)Joint.Lefthand].Y.ToString());
                         game.ObjectTouched(objects[i], Joint.Lefthand);
 
-                        if (DEBUGMODE) { Touch.Text = objects[i].Type + "is touched by lefthand"; }
+                        if (DEBUGMODE) { Touch.Text = objects[i].Type + " is touched by lefthand"; }
 
                         continue;
                     }
@@ -197,9 +198,9 @@ namespace KinectGame
                         if (SQR_Distance(pos[j], objects[i].Position) <= 100)
                         {
                             objects[i].IsTouched = true;
-                            Debug.WriteLine(objects[i].Type + "is touched by " + j);
+                            Debug.WriteLine(objects[i].Type + " is touched by " + j);
                             Debug.WriteLine(objects[i].Position.ToString() + " " + pos[j].X.ToString() + " " + pos[j].Y.ToString());
-                            if (DEBUGMODE) { Touch.Text = objects[i].Type + "is touched by " + j; }
+                            if (DEBUGMODE) { Touch.Text = objects[i].Type + " is touched by " + j; }
                             game.ObjectTouched(objects[i], Joint.Other);
                             break;
                         }
@@ -214,9 +215,7 @@ namespace KinectGame
         private void Kinect_Class2_Loaded(object sender, RoutedEventArgs e)
         {
             this.ImageSource.Source = this.bitmap;
-
             pauseTextBox.Visibility = Visibility.Hidden;
-
         }
 
         private void Kinect_Class2_Unloaded(object sender, RoutedEventArgs e)
