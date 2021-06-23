@@ -64,7 +64,9 @@ namespace KinectGame
             this.game = new Game(this.ImageCanvas,this.PointCanvas, this.ImageSource.Width, this.ImageSource.Height, 150, this);
             DEBUGMODE = false;
 
-            
+            firstLive.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "../../../Source/live.png"));
+            secondLive.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "../../../Source/live.png"));
+            thirdLive.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "../../../Source/live.png"));
 
             FlowDocument pauseDoc = new FlowDocument();
             Paragraph pause = new Paragraph();

@@ -270,7 +270,23 @@ namespace KinectGame
                     PlayerHealth = 0;
                     endGame(true);
                 }
-                GameWindow.Health_bar.Value = PlayerHealth;
+
+                if (PlayerHealth == 2)
+                {
+                    GameWindow.thirdLive.Visibility = Visibility.Hidden;
+                }
+                else if (PlayerHealth == 1)
+                {
+                    GameWindow.secondLive.Visibility = Visibility.Hidden;
+                    GameWindow.thirdLive.Visibility = Visibility.Hidden;
+                }
+                else if (PlayerHealth == 0)
+                {
+                    GameWindow.firstLive.Visibility = Visibility.Hidden;
+                    GameWindow.secondLive.Visibility = Visibility.Hidden;
+                    GameWindow.thirdLive.Visibility = Visibility.Hidden;
+                }
+                // GameWindow.Health_bar.Value = PlayerHealth;
                 GameWindow.Score_Text.Text = PlayerScore.ToString();
                // GameWindow.Sum_Score_Title.Content = "Score Sum: " + PlayerScore.ToString();
                // GameWindow.Sum_Life_Title.Content = "Life Left: " + PlayerHealth.ToString();
