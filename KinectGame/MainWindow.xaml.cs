@@ -136,8 +136,8 @@ namespace KinectGame
                     if (DEBUGMODE) { txtLeft.Text = "No body"; }
                     return;
                 }
-                
-                
+
+
                 List<BaseObject> objects = game.getObjects();
 
                 // add_to_list(body);
@@ -145,13 +145,13 @@ namespace KinectGame
                 // txtRight.Text = pos[(int)Joint.Righthand].X.ToString() + "\n" + pos[(int)Joint.Righthand].Y.ToString() + "\n";
                 //CameraSpacePoint righthand_ = body.Joints[JointType.HandRight].Position;
                 //CameraSpacePoint lefthand_ = body.Joints[JointType.HandLeft].Position;
-              
+
                 SpineShoudler = body.Joints[JointType.SpineShoulder].Position.Z;
                 SpineShoulderDepthTxt.Text = SpineShoudler.ToString();
 
                 if (game.gameStatus == GameStatus.Pause)
                 {
-                    if (ConvertSpace( body.Joints[JointType.HandRight].Position).Y < ConvertSpace( body.Joints[JointType.ElbowRight].Position).Y && SpineShoudler > 1.5)
+                    if (ConvertSpace(body.Joints[JointType.HandRight].Position).Y < ConvertSpace(body.Joints[JointType.ElbowRight].Position).Y && SpineShoudler > 1.5)
                     {
                         Debug.WriteLine(body.Joints[JointType.HandRight].Position.Y + " " + body.Joints[JointType.ElbowRight].Position.Y);
                         game.gameStatus = GameStatus.NotStartYet;
@@ -170,7 +170,17 @@ namespace KinectGame
 
                 for (int i = 0; i < objects.Count && !objects[i].IsTouched; i++)
                 {
-                    if (SQR_Distance(ConvertSpace(body.Joints[JointType.WristRight].Position), objects[i].Position) <= 100)
+                    ColorSpacePoint pos_R;
+                    if (body.Joints[JointType.HandRight].TrackingState != TrackingState.NotTracked)
+                    {
+                        pos_R = ConvertSpace(body.Joints[JointType.HandRight].Position);
+                    }
+                    else
+                    {
+                        pos_R = ConvertSpace(body.Joints[JointType.WristRight].Position);
+
+                    }
+                    if (SQR_Distance(pos_R, objects[i].Position) <= 100)
                     {
                         objects[i].IsTouched = true;
                         Debug.WriteLine(objects[i].Type + " is touched by righthand");
@@ -182,7 +192,18 @@ namespace KinectGame
 
                         continue;
                     }
-                    else if (SQR_Distance(ConvertSpace(body.Joints[JointType.WristLeft].Position), objects[i].Position) <= 100)
+                    ColorSpacePoint pos_L;
+                    if (body.Joints[JointType.HandLeft].TrackingState != TrackingState.NotTracked)
+                    {
+                        pos_L = ConvertSpace(body.Joints[JointType.HandLeft].Position);
+                    }
+                    else
+                    {
+                        pos_L = ConvertSpace(body.Joints[JointType.WristLeft].Position);
+
+                    }
+
+                     if (SQR_Distance(pos_L, objects[i].Position) <= 100)
                     {
                         objects[i].IsTouched = true;
                         Debug.WriteLine(objects[i].Type + " is touched by lefthand");
@@ -330,7 +351,7 @@ namespace KinectGame
         {
             if (game.gameStatus == GameStatus.NotStartYet)
             {
-               
+
                 game.StartGame();
                 BackgroundImage.Source = null;
                 //  startBtn.Content = "Pause";
