@@ -26,7 +26,7 @@
             <TextBox x:Name="pauseText" Text="Please stand a little bit further!" Canvas.Left="513" Canvas.Top="362" Width="597" Height="191" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="30" FontFamily="Showcard Gothic" BorderBrush="Black" Background="#FFFFA0A0" BorderThickness="5" Visibility="Hidden"/>
             <TextBlock x:Name="Touch" TextWrapping="Wrap" Canvas.Top="432" Height="383" Width="145"/>
             <Border x:Name="TimerBorder" BorderBrush="Black" BorderThickness="3" Height="42" Canvas.Left="1222" Width="144" CornerRadius="8">
-                <TextBox x:Name="GameTimer" Canvas.Left="1090" TextWrapping="Wrap" Text="Timer" Canvas.Top="-42" TextAlignment="Center" Background="White" FontSize="25" BorderBrush="{x:Null}" BorderThickness="3" Margin="7,0,7,-3" FontWeight="Bold" FontFamily="Showcard Gothic" />
+                <TextBox x:Name="GameTimer" Canvas.Left="1090" TextWrapping="Wrap" Text="Timer" Canvas.Top="-42" TextAlignment="Center" Background="{x:Null}" FontSize="25" BorderBrush="{x:Null}" BorderThickness="3" Margin="7,0,7,-3" FontWeight="Bold" FontFamily="Showcard Gothic" />
             </Border>
             <ProgressBar x:Name="Health_bar" Height="42" Canvas.Left="324" Width="217" Value="3" Padding="6,0,0,0" Foreground="#FFFF3F3F" Background="#FFB67B7B" Maximum="3" Focusable="True"/>
             <TextBox x:Name="Health_text" Height="42" Canvas.Left="206" TextWrapping="Wrap" Text="Health:" Width="113" FontFamily="Showcard Gothic" FontSize="25" Background="{x:Null}" BorderBrush="{x:Null}" Canvas.Top="5"/>
@@ -49,5 +49,11 @@
             </Button.RenderTransform>
             <Image x:Name="startBtn_Image" Height="168" Width="533" Stretch="Fill"/>
         </Button>
+        <GroupBox x:Name="SumupGroup" Grid.ColumnSpan="5" Header="Total" HorizontalAlignment="Left" Height="194" VerticalAlignment="Top" Width="484" Margin="552,294,0,0" FontFamily="Showcard Gothic" FontSize="25" Background="#FF9E9E00" BorderBrush="#00D5DFE5" BorderThickness="0">
+            <StackPanel HorizontalAlignment="Left" Height="154" Margin="0,0,-2,0" VerticalAlignment="Top" Width="474">
+                <Label x:Name="Sum_Score_Title" Content="Score Sum:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontSize="36"/>
+                <Label x:Name="Sum_Life_Title" Content="Life Left:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontSize="36"/>
+            </StackPanel>
+        </GroupBox>
     </Grid>
 </Window>

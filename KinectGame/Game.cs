@@ -213,6 +213,9 @@ namespace KinectGame {
             timer.Stop();
             canvas.Children.Clear();
             GameWindow.GameTimer.Text = "Timeout";
+            GameWindow.SumupGroup.Visibility = Visibility.Visible;
+            GameWindow.Sum_Score_Title.Content = "Score Sum: " + PlayerScore.ToString();
+            GameWindow.Sum_Life_Title.Content = "Life Left: " + PlayerHealth.ToString();
             gameStatus = GameStatus.GameOver;
         }
     }
