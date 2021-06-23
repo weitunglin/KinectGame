@@ -37,7 +37,7 @@
         <TextBlock x:Name="txtRight" Height="60" Margin="10,139,1410,672" Grid.ColumnSpan="5"></TextBlock>
         <TextBlock x:Name="SpineShoulderDepthTxt" Height="60" Margin="10,260,1410,551" Grid.ColumnSpan="5"></TextBlock>
         <TextBlock x:Name="Pause" Height="60" Grid.ColumnSpan="5" Margin="0,406,1554,405"><Run Text="Pause"/></TextBlock>
-        <Button x:Name="startBtn" Grid.ColumnSpan="5" Margin="544,494,475,208" RenderTransformOrigin="0.5,0.5" Click="startBtn_Click" BorderThickness="0" Background="#00DDDDDD" MouseEnter="startBtn_MouseEnter" MouseLeave="startBtn_MouseLeave" >
+        <Button x:Name="startBtn" Grid.ColumnSpan="5" Margin="544,494,475,208" RenderTransformOrigin="0.5,0.5" Click="startBtn_Click" BorderThickness="0" Background="#00DDDDDD" MouseEnter="startBtn_MouseEnter" MouseLeave="startBtn_MouseLeave" Style="{StaticResource NormalMouseButton}">
             <Button.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
