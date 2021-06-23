@@ -37,12 +37,9 @@ namespace KinectGame
 
         private List<ColorSpacePoint> pos = new List<ColorSpacePoint>();
 
-        private float SpineShoudler = new float();
-
+        private float SpineShoudler { get; set; }
 
         private GameStatus gameStatus = GameStatus.NotStartYet;
-
-
         private bool DEBUGMODE;
 
 
@@ -143,18 +140,18 @@ namespace KinectGame
                 
                 List<BaseObject> objects = game.getObjects();
 
-                
-                add_to_list(body);
-                txtLeft.Text = pos[(int)Joint.Lefthand].X.ToString() + "\n" + pos[(int)Joint.Lefthand].Y.ToString() + "\n";
-                txtRight.Text = pos[(int)Joint.Righthand].X.ToString() + "\n" + pos[(int)Joint.Righthand].Y.ToString() + "\n";
+                // add_to_list(body);
+                // txtLeft.Text = pos[(int)Joint.Lefthand].X.ToString() + "\n" + pos[(int)Joint.Lefthand].Y.ToString() + "\n";
+                // txtRight.Text = pos[(int)Joint.Righthand].X.ToString() + "\n" + pos[(int)Joint.Righthand].Y.ToString() + "\n";
+                SpineShoudler = body.Joints[JointType.SpineShoulder].Position.Z;
                 SpineShoulderDepthTxt.Text = SpineShoudler.ToString();
 
                 if (game.gameStatus == GameStatus.Pause)
                 {
-                    if (pos[(int)Joint.Righthand].Y < pos[(int)Joint.RightElbow].Y && SpineShoudler > 1.5)
+                    if (body.Joints[JointType.HandRight].Position.Y < body.Joints[JointType.ElbowRight].Position.Y && SpineShoudler > 1.5)
                     {
-                        Debug.WriteLine(pos[(int)Joint.Righthand].Y + " " + pos[(int)Joint.RightElbow].Y);
-                        game.gameStatus = GameStatus.NotStartYet;
+                        // Debug.WriteLine(pos[(int)Joint.Righthand].Y + " " + pos[(int)Joint.RightElbow].Y);
+                        gameStatus = GameStatus.NotStartYet;
                         game.StartGame();
                         game.gameStatus = GameStatus.Gaming;
                         pauseTextBox.Visibility = Visibility.Hidden;
@@ -170,43 +167,42 @@ namespace KinectGame
 
                 for (int i = 0; i < objects.Count && !objects[i].IsTouched; i++)
                 {
-                    if (SQR_Distance(pos[(int)Joint.Righthand], objects[i].Position) <= 100)
+                    if (SQR_Distance(ConvertSpace(body.Joints[JointType.HandRight].Position), objects[i].Position) <= 100)
                     {
                         objects[i].IsTouched = true;
                         Debug.WriteLine(objects[i].Type + " is touched by righthand");
 
-                        Debug.WriteLine(objects[i].Position.ToString() + " " + pos[(int)Joint.Righthand].X.ToString() + pos[(int)Joint.Righthand].Y.ToString());
+                        // Debug.WriteLine(objects[i].Position.ToString() + " " + pos[(int)Joint.Righthand].X.ToString() + pos[(int)Joint.Righthand].Y.ToString());
                         game.ObjectTouched(objects[i], Joint.Righthand);
 
-                        if (DEBUGMODE) { Touch.Text = objects[i].Type + " is touched by righthand"; }
+                        // if (DEBUGMODE) { Touch.Text = objects[i].Type + "is touched by righthand"; }
 
                         continue;
                     }
-                    else if (SQR_Distance(pos[(int)Joint.Lefthand], objects[i].Position) <= 100)
+                    else if (SQR_Distance(ConvertSpace(body.Joints[JointType.HandLeft].Position), objects[i].Position) <= 100)
                     {
                         objects[i].IsTouched = true;
                         Debug.WriteLine(objects[i].Type + " is touched by lefthand");
 
-                        Debug.WriteLine(objects[i].Position.ToString() + " " + pos[(int)Joint.Lefthand].X.ToString() + pos[(int)Joint.Lefthand].Y.ToString());
+                        // Debug.WriteLine(objects[i].Position.ToString() + " " + pos[(int)Joint.Lefthand].X.ToString() + pos[(int)Joint.Lefthand].Y.ToString());
                         game.ObjectTouched(objects[i], Joint.Lefthand);
 
-                        if (DEBUGMODE) { Touch.Text = objects[i].Type + " is touched by lefthand"; }
+                        // if (DEBUGMODE) { Touch.Text = objects[i].Type + "is touched by lefthand"; }
 
                         continue;
                     }
-                    for (int j = 0; j < pos.Count; j++)
-                    {
-                        if (SQR_Distance(pos[j], objects[i].Position) <= 100)
-                        {
-                            objects[i].IsTouched = true;
-                            Debug.WriteLine(objects[i].Type + " is touched by " + j);
-                            Debug.WriteLine(objects[i].Position.ToString() + " " + pos[j].X.ToString() + " " + pos[j].Y.ToString());
-                            if (DEBUGMODE) { Touch.Text = objects[i].Type + " is touched by " + j; }
-                            game.ObjectTouched(objects[i], Joint.Other);
-                            break;
-                        }
-
-                    }
+                    //for (int j = 0; j < pos.Count; j++)
+                    //{
+                    //    if (SQR_Distance(pos[j], objects[i].Position) <= 100)
+                    //    {
+                    //        objects[i].IsTouched = true;
+                    //        Debug.WriteLine(objects[i].Id + "is touched by " + j);
+                    //        Debug.WriteLine(objects[i].Position.ToString() + " " + pos[j].X.ToString() + " " + pos[j].Y.ToString());
+                    //        if (DEBUGMODE) { Touch.Text = objects[i].Type + "is touched by " + j; }
+                    //        game.ObjectTouched(objects[i], Joint.Other);
+                    //        break;
+                    //    }
+                    //}
                 }
             }
         }
@@ -240,6 +236,11 @@ namespace KinectGame
             return Math.Sqrt((((a.X) - (b.X)) * ((a.X) - (b.X))) + (((a.Y) - (b.Y)) * ((a.Y) - (b.Y))));
         }
 
+        private ColorSpacePoint ConvertSpace(CameraSpacePoint p)
+        {
+            return sensor.CoordinateMapper.MapCameraPointToColorSpace(p);
+        }
+
         private void add_to_list(Body body)
         {
             pos.Clear();
@@ -247,26 +248,26 @@ namespace KinectGame
             //torso
             CameraSpacePoint head_ = body.Joints[JointType.Head].Position;
             CameraSpacePoint spineshoulder_ = body.Joints[JointType.SpineShoulder].Position;
-            CameraSpacePoint leftshoulder_ = body.Joints[JointType.ShoulderLeft].Position;
-            CameraSpacePoint rightshoulder_ = body.Joints[JointType.ShoulderRight].Position;
-            CameraSpacePoint lefthip_ = body.Joints[JointType.HipLeft].Position;
-            CameraSpacePoint righthip_ = body.Joints[JointType.HipRight].Position;
+            //CameraSpacePoint leftshoulder_ = body.Joints[JointType.ShoulderLeft].Position;
+            //CameraSpacePoint rightshoulder_ = body.Joints[JointType.ShoulderRight].Position;
+            //CameraSpacePoint lefthip_ = body.Joints[JointType.HipLeft].Position;
+            //CameraSpacePoint righthip_ = body.Joints[JointType.HipRight].Position;
 
             ColorSpacePoint head_pos = sensor.CoordinateMapper.MapCameraPointToColorSpace(head_);
             ColorSpacePoint spineshoulder_pos = sensor.CoordinateMapper.MapCameraPointToColorSpace(spineshoulder_);
-            ColorSpacePoint leftshoulder_pos = sensor.CoordinateMapper.MapCameraPointToColorSpace(leftshoulder_);
-            ColorSpacePoint rightshoulder_pos = sensor.CoordinateMapper.MapCameraPointToColorSpace(rightshoulder_);
-            ColorSpacePoint lefthip_pos = sensor.CoordinateMapper.MapCameraPointToColorSpace(lefthip_);
-            ColorSpacePoint righthip_pos = sensor.CoordinateMapper.MapCameraPointToColorSpace(righthip_);
+            //ColorSpacePoint leftshoulder_pos = sensor.CoordinateMapper.MapCameraPointToColorSpace(leftshoulder_);
+            //ColorSpacePoint rightshoulder_pos = sensor.CoordinateMapper.MapCameraPointToColorSpace(rightshoulder_);
+            //ColorSpacePoint lefthip_pos = sensor.CoordinateMapper.MapCameraPointToColorSpace(lefthip_);
+            //ColorSpacePoint righthip_pos = sensor.CoordinateMapper.MapCameraPointToColorSpace(righthip_);
 
             SpineShoudler = body.Joints[JointType.SpineShoulder].Position.Z;
 
             pos.Add(head_pos);
             pos.Add(spineshoulder_pos);
-            pos.Add(leftshoulder_pos);
-            pos.Add(rightshoulder_pos);
-            pos.Add(lefthip_pos);
-            pos.Add(righthip_pos); //5
+            //pos.Add(leftshoulder_pos);
+            //pos.Add(rightshoulder_pos);
+            //pos.Add(lefthip_pos);
+            //pos.Add(righthip_pos); //5
 
             //right hand
             CameraSpacePoint righthand_ = body.Joints[JointType.HandRight].Position;
@@ -295,31 +296,31 @@ namespace KinectGame
             pos.Add(leftwrist_pos);
 
 
-            //right
-            CameraSpacePoint rightknee_ = body.Joints[JointType.KneeRight].Position;
-            CameraSpacePoint rightankel_ = body.Joints[JointType.AnkleRight].Position;
-            CameraSpacePoint rightfoot_ = body.Joints[JointType.FootRight].Position;
+            ////right
+            //CameraSpacePoint rightknee_ = body.Joints[JointType.KneeRight].Position;
+            //CameraSpacePoint rightankel_ = body.Joints[JointType.AnkleRight].Position;
+            //CameraSpacePoint rightfoot_ = body.Joints[JointType.FootRight].Position;
 
-            ColorSpacePoint rightknee_pos = sensor.CoordinateMapper.MapCameraPointToColorSpace(rightknee_);
-            ColorSpacePoint rightankel_pos = sensor.CoordinateMapper.MapCameraPointToColorSpace(rightankel_);
-            ColorSpacePoint rightfoot_pos = sensor.CoordinateMapper.MapCameraPointToColorSpace(rightfoot_);
+            //ColorSpacePoint rightknee_pos = sensor.CoordinateMapper.MapCameraPointToColorSpace(rightknee_);
+            //ColorSpacePoint rightankel_pos = sensor.CoordinateMapper.MapCameraPointToColorSpace(rightankel_);
+            //ColorSpacePoint rightfoot_pos = sensor.CoordinateMapper.MapCameraPointToColorSpace(rightfoot_);
 
-            pos.Add(rightknee_pos);
-            pos.Add(rightankel_pos);
-            pos.Add(rightfoot_pos);
+            //pos.Add(rightknee_pos);
+            //pos.Add(rightankel_pos);
+            //pos.Add(rightfoot_pos);
 
-            //left leg
-            CameraSpacePoint leftknee_ = body.Joints[JointType.KneeLeft].Position;
-            CameraSpacePoint leftankel_ = body.Joints[JointType.AnkleLeft].Position;
-            CameraSpacePoint leftfoot_ = body.Joints[JointType.FootLeft].Position;
+            ////left leg
+            //CameraSpacePoint leftknee_ = body.Joints[JointType.KneeLeft].Position;
+            //CameraSpacePoint leftankel_ = body.Joints[JointType.AnkleLeft].Position;
+            //CameraSpacePoint leftfoot_ = body.Joints[JointType.FootLeft].Position;
 
-            ColorSpacePoint leftknee_pos = sensor.CoordinateMapper.MapCameraPointToColorSpace(leftknee_);
-            ColorSpacePoint leftankel_pos = sensor.CoordinateMapper.MapCameraPointToColorSpace(leftankel_);
-            ColorSpacePoint leftfoot_pos = sensor.CoordinateMapper.MapCameraPointToColorSpace(leftfoot_);
+            //ColorSpacePoint leftknee_pos = sensor.CoordinateMapper.MapCameraPointToColorSpace(leftknee_);
+            //ColorSpacePoint leftankel_pos = sensor.CoordinateMapper.MapCameraPointToColorSpace(leftankel_);
+            //ColorSpacePoint leftfoot_pos = sensor.CoordinateMapper.MapCameraPointToColorSpace(leftfoot_);
 
-            pos.Add(leftknee_pos);
-            pos.Add(leftankel_pos);
-            pos.Add(leftfoot_pos);
+            //pos.Add(leftknee_pos);
+            //pos.Add(leftankel_pos);
+            //pos.Add(leftfoot_pos);
         }
 
         private void startBtn_Click(object sender, RoutedEventArgs e)
@@ -352,4 +353,4 @@ namespace KinectGame
         }
     }
 }
-    
+
