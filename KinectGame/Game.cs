@@ -33,8 +33,10 @@ namespace KinectGame
         public GameStatus gameStatus { get; set; }
         private Random random = null;
         private Canvas canvas = null;
+        private Canvas pointcanvas = null;
         private DispatcherTimer timer = null;
         private DispatcherTimer dt = null;
+        private DispatcherTimer pointTimer = null;
         private double imageSourceWidth;
         private double imageSourceHeight;
         private double imageSourceBoarder;
@@ -46,12 +48,15 @@ namespace KinectGame
         private int Minutes { get { return TotalTime / 60; } }
         private int Seconds { get { return TotalTime % 60; } }
         public int CountDown;
-
+        public int pointcountdown;
+        private TextBlock points;
+        private BaseObject CurrentTouchedobj;
         public List<BaseObject> getObjects() { return objects; }
 
-        public Game(Canvas c, double sourceWidth, double sourceHeight, double sourceBoarder, MainWindow _GameWindow)
+        public Game(Canvas c, Canvas p, double sourceWidth, double sourceHeight, double sourceBoarder, MainWindow _GameWindow)
         {
             this.canvas = c;
+            this.pointcanvas = p;
             this.random = new Random();
             this.imageSourceHeight = sourceHeight;
             this.imageSourceWidth = sourceWidth;
@@ -61,16 +66,23 @@ namespace KinectGame
             this.gameStatus = GameStatus.NotStartYet;
             this.PlayerScore = 0;
             this.PlayerHealth = 3;
-
+            TotalTime = 100; ///////////////////////////////////////////////////////////
+            CountDown = 3;
+            pointcountdown = 2;
+            points = null;
+            CurrentTouchedobj = null;
 
             timer = new DispatcherTimer();
             timer.Tick += new EventHandler(randomObjects);
             timer.Interval = new TimeSpan(0, 0, 2);
-            TotalTime = 15;
-            CountDown = 3;
+
             dt = new DispatcherTimer();
             dt.Interval = new TimeSpan(0, 0, 1);
             dt.Tick += dtTicker;
+
+            pointTimer = new DispatcherTimer();
+            pointTimer.Interval = new TimeSpan(0, 0, 1);
+            pointTimer.Tick += pointtimertick;
         }
 
         private void randomObjects(Object source, EventArgs e)
@@ -157,7 +169,7 @@ namespace KinectGame
             if (CountDown > 0)
             {
                 GameWindow.countDownTxt.Visibility = Visibility.Visible;
-               
+
                 switch (CountDown)
                 {
                     case 3:
@@ -204,7 +216,7 @@ namespace KinectGame
                 timer = new DispatcherTimer();
                 timer.Tick += new EventHandler(randomObjects);
                 timer.Interval = new TimeSpan(0, 0, 2);
-                TotalTime = 15;
+                TotalTime = 100;
                 CountDown = 3;
                 dt = new DispatcherTimer();
                 dt.Interval = new TimeSpan(0, 0, 1);
@@ -244,20 +256,24 @@ namespace KinectGame
             {
                 PlayerScore += TouchedObj.Credit;
                 PlayerHealth += TouchedObj.Heart;
-                if (PlayerHealth >= 3)
+                bool ScoreHeart = false;
+                if (PlayerHealth > 3)
                 {
+
+                    ScoreHeart = true;
                     PlayerHealth = 3;
                     PlayerScore += 3; // over health score
+
                 }
                 else if (PlayerHealth <= 0)
                 {
                     PlayerHealth = 0;
-                    endGame();
+                    endGame(true);
                 }
                 GameWindow.Health_bar.Value = PlayerHealth;
                 GameWindow.Score_Text.Text = PlayerScore.ToString();
-                GameWindow.Sum_Score_Title.Content = "Score Sum: " + PlayerScore.ToString();
-                GameWindow.Sum_Life_Title.Content = "Life Left: " + PlayerHealth.ToString();
+               // GameWindow.Sum_Score_Title.Content = "Score Sum: " + PlayerScore.ToString();
+               // GameWindow.Sum_Life_Title.Content = "Life Left: " + PlayerHealth.ToString();
                 for (int i = canvas.Children.Count - 1; i >= 0; --i)
                 {
                     if (canvas.Children[i].Uid == TouchedObj.Id)
@@ -266,21 +282,82 @@ namespace KinectGame
                         break;
                     }
                 }
+                CurrentTouchedobj = TouchedObj;
+                show_points(TouchedObj, ScoreHeart);
             }
         }
 
-        private void endGame()
+        private void endGame(bool dead = false)
         {
             dt.Stop();
             timer.Stop();
             canvas.Children.Clear();
             GameWindow.GameTimer.Text = "Timeout";
-            GameWindow.SumupGroup.Visibility = Visibility.Visible;
+
             GameWindow.Sum_Score_Title.Content = "Score Sum: " + PlayerScore.ToString();
-            GameWindow.Sum_Life_Title.Content = "Life Left: " + PlayerHealth.ToString();
+            if (!dead)
+            {
+                GameWindow.Sum_Life_Title.Content = "Life Left: " + PlayerHealth.ToString();
+            }
+            else
+            {
+
+                GameWindow.Sum_Life_Title.Content = "YOU ARE DEAD";
+                GameWindow.Sum_Life_Title.Foreground = Brushes.Red;
+            }
+            GameWindow.SumupGroup.Visibility = Visibility.Visible;
             gameStatus = GameStatus.GameOver;
             GameWindow.startBtn.Visibility = Visibility.Visible;
             GameWindow.BackgroundImage.Visibility = Visibility.Visible;
+        }
+
+        private void show_points(BaseObject TouchedObj, bool ScoreHeart)
+        {
+            points = new TextBlock();
+            points.FontFamily = new FontFamily("Showcard Gothic");
+            points.FontSize = 60;
+            points.Foreground = Brushes.Red;
+            if (ScoreHeart == false)
+            {
+                points.Text = "+" + TouchedObj.Credit.ToString();
+            }
+            else
+            {
+                points.Text = "+3";
+            }
+            pointcountdown = 2;
+            Canvas.SetLeft(points, CurrentTouchedobj.Position.X * 1280.0 / 1920.0);
+            Canvas.SetTop(points, (CurrentTouchedobj.Position.Y * 720.0 / 1080.0));
+            pointcanvas.Children.Add(points);
+            pointTimer.Start();
+        }
+
+        private void pointtimertick(object sender, EventArgs e)
+        {
+
+            switch (pointcountdown)
+            {
+                case 2:
+                    pointcanvas.Children.Clear();
+                    Canvas.SetLeft(points, CurrentTouchedobj.Position.X * 1280.0 / 1920.0);
+                    Canvas.SetTop(points, (CurrentTouchedobj.Position.Y * 720.0 / 1080.0) - 25);
+                    pointcanvas.Children.Add(points);
+                    break;
+                case 1:
+                    pointcanvas.Children.Clear();
+                    Canvas.SetLeft(points, CurrentTouchedobj.Position.X * 1280.0 / 1920.0);
+                    Canvas.SetTop(points, (CurrentTouchedobj.Position.Y * 720.0 / 1080.0) - 50);
+                    pointcanvas.Children.Add(points);
+                    break;
+                case 0:
+                    pointcanvas.Children.Clear();
+                    //Canvas.SetLeft(points, CurrentTouchedobj.Position.X * 1280.0 / 1920.0);
+                    //Canvas.SetTop(points, (CurrentTouchedobj.Position.Y * 720.0 / 1080.0) - 100);
+                    //pointcanvas.Children.Add(points);             
+                    pointTimer.Stop();
+                    break;
+            }
+            pointcountdown--;
         }
     }
 }

@@ -61,7 +61,7 @@ namespace KinectGame
             this.bitmap = new WriteableBitmap(this.frameDescription.Width, this.frameDescription.Height, 96, 96, PixelFormats.Bgr32, null);
             this.sensor.Open();
 
-            this.game = new Game(this.ImageCanvas, this.ImageSource.Width, this.ImageSource.Height, 150, this);
+            this.game = new Game(this.ImageCanvas,this.PointCanvas, this.ImageSource.Width, this.ImageSource.Height, 150, this);
             DEBUGMODE = false;
 
             
@@ -172,7 +172,9 @@ namespace KinectGame
                         game.gameStatus = GameStatus.Pause;
                         game.StartGame();
                     }
-                   
+
+                  
+
                     for (int i = 0; i < objects.Count && !objects[i].IsTouched; i++)
                     {
                         ColorSpacePoint pos_R;
@@ -191,7 +193,7 @@ namespace KinectGame
                             Debug.WriteLine(objects[i].Type + " is touched by righthand");
                             game.ObjectTouched(objects[i], Joint.Righthand);
 
-                             if (DEBUGMODE) { Touch.Text = objects[i].Type + "is touched by righthand"; }
+                            if (DEBUGMODE) { Touch.Text = objects[i].Type + "is touched by righthand"; }
 
                             continue;
                         }
@@ -212,11 +214,11 @@ namespace KinectGame
                             Debug.WriteLine(objects[i].Type + " is touched by lefthand");
                             game.ObjectTouched(objects[i], Joint.Lefthand);
 
-                             if (DEBUGMODE) { Touch.Text = objects[i].Type + "is touched by lefthand"; }
+                            if (DEBUGMODE) { Touch.Text = objects[i].Type + "is touched by lefthand"; }
 
                             continue;
                         }
-                       
+
                     }
                 }
             }
@@ -281,7 +283,7 @@ namespace KinectGame
             startBtn_Image.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "../../../Source/start.png"));
         }
 
-        
+       
     }
 }
 

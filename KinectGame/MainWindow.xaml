@@ -17,7 +17,7 @@
         </Grid.ColumnDefinitions>
 
         <Image x:Name="ImageSource" HorizontalAlignment="Left" Height="720" Margin="143,51,0,0" VerticalAlignment="Top" Width="1280" Grid.ColumnSpan="5"/>
-
+        <Canvas x:Name="PointCanvas"  HorizontalAlignment="Left" Height="720" Margin="148,51,0,0" VerticalAlignment="Top" Width="1280"  Grid.ColumnSpan="5"></Canvas>
         <Canvas x:Name="ImageCanvas"  HorizontalAlignment="Left" Height="720" Margin="148,51,0,0" VerticalAlignment="Top" Width="1280" Background="Transparent" Grid.ColumnSpan="5">
         </Canvas>
         <Canvas Grid.ColumnSpan="5">
