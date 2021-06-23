@@ -37,12 +37,9 @@ namespace KinectGame
 
         private List<ColorSpacePoint> pos = new List<ColorSpacePoint>();
 
-        private float SpineShoudler = new float();
-
+        private float SpineShoudler { get; set; }
 
         private GameStatus gameStatus = GameStatus.NotStartYet;
-
-
         private bool DEBUGMODE;
 
 
@@ -140,17 +137,17 @@ namespace KinectGame
                 
                 List<BaseObject> objects = game.getObjects();
 
-                
-                add_to_list(body);
-                txtLeft.Text = pos[(int)Joint.Lefthand].X.ToString() + "\n" + pos[(int)Joint.Lefthand].Y.ToString() + "\n";
-                txtRight.Text = pos[(int)Joint.Righthand].X.ToString() + "\n" + pos[(int)Joint.Righthand].Y.ToString() + "\n";
+                // add_to_list(body);
+                // txtLeft.Text = pos[(int)Joint.Lefthand].X.ToString() + "\n" + pos[(int)Joint.Lefthand].Y.ToString() + "\n";
+                // txtRight.Text = pos[(int)Joint.Righthand].X.ToString() + "\n" + pos[(int)Joint.Righthand].Y.ToString() + "\n";
+                SpineShoudler = body.Joints[JointType.SpineShoulder].Position.Z;
                 SpineShoulderDepthTxt.Text = SpineShoudler.ToString();
 
                 if (gameStatus == GameStatus.Pause)
                 {
-                    if (pos[(int)Joint.Righthand].Y < pos[(int)Joint.RightElbow].Y && SpineShoudler > 1.5)
+                    if (body.Joints[JointType.HandRight].Position.Y < body.Joints[JointType.ElbowRight].Position.Y && SpineShoudler > 1.5)
                     {
-                        Debug.WriteLine(pos[(int)Joint.Righthand].Y + " " + pos[(int)Joint.RightElbow].Y);
+                        // Debug.WriteLine(pos[(int)Joint.Righthand].Y + " " + pos[(int)Joint.RightElbow].Y);
                         gameStatus = GameStatus.NotStartYet;
                         game.StartGame();
                         gameStatus = GameStatus.Gaming;
@@ -167,43 +164,42 @@ namespace KinectGame
 
                 for (int i = 0; i < objects.Count && !objects[i].IsTouched; i++)
                 {
-                    if (SQR_Distance(pos[(int)Joint.Righthand], objects[i].Position) <= 100)
+                    if (SQR_Distance(ConvertSpace(body.Joints[JointType.HandRight].Position), objects[i].Position) <= 100)
                     {
                         objects[i].IsTouched = true;
                         Debug.WriteLine(objects[i].Id + "is touched by righthand");
 
-                        Debug.WriteLine(objects[i].Position.ToString() + " " + pos[(int)Joint.Righthand].X.ToString() + pos[(int)Joint.Righthand].Y.ToString());
+                        // Debug.WriteLine(objects[i].Position.ToString() + " " + pos[(int)Joint.Righthand].X.ToString() + pos[(int)Joint.Righthand].Y.ToString());
                         game.ObjectTouched(objects[i], Joint.Righthand);
 
-                        if (DEBUGMODE) { Touch.Text = objects[i].Type + "is touched by righthand"; }
+                        // if (DEBUGMODE) { Touch.Text = objects[i].Type + "is touched by righthand"; }
 
                         continue;
                     }
-                    else if (SQR_Distance(pos[(int)Joint.Lefthand], objects[i].Position) <= 100)
+                    else if (SQR_Distance(ConvertSpace(body.Joints[JointType.HandLeft].Position), objects[i].Position) <= 100)
                     {
                         objects[i].IsTouched = true;
                         Debug.WriteLine(objects[i].Id + "is touched by lefthand");
 
-                        Debug.WriteLine(objects[i].Position.ToString() + " " + pos[(int)Joint.Lefthand].X.ToString() + pos[(int)Joint.Lefthand].Y.ToString());
+                        // Debug.WriteLine(objects[i].Position.ToString() + " " + pos[(int)Joint.Lefthand].X.ToString() + pos[(int)Joint.Lefthand].Y.ToString());
                         game.ObjectTouched(objects[i], Joint.Lefthand);
 
-                        if (DEBUGMODE) { Touch.Text = objects[i].Type + "is touched by lefthand"; }
+                        // if (DEBUGMODE) { Touch.Text = objects[i].Type + "is touched by lefthand"; }
 
                         continue;
                     }
-                    for (int j = 0; j < pos.Count; j++)
-                    {
-                        if (SQR_Distance(pos[j], objects[i].Position) <= 100)
-                        {
-                            objects[i].IsTouched = true;
-                            Debug.WriteLine(objects[i].Id + "is touched by " + j);
-                            Debug.WriteLine(objects[i].Position.ToString() + " " + pos[j].X.ToString() + " " + pos[j].Y.ToString());
-                            if (DEBUGMODE) { Touch.Text = objects[i].Type + "is touched by " + j; }
-                            game.ObjectTouched(objects[i], Joint.Other);
-                            break;
-                        }
-
-                    }
+                    //for (int j = 0; j < pos.Count; j++)
+                    //{
+                    //    if (SQR_Distance(pos[j], objects[i].Position) <= 100)
+                    //    {
+                    //        objects[i].IsTouched = true;
+                    //        Debug.WriteLine(objects[i].Id + "is touched by " + j);
+                    //        Debug.WriteLine(objects[i].Position.ToString() + " " + pos[j].X.ToString() + " " + pos[j].Y.ToString());
+                    //        if (DEBUGMODE) { Touch.Text = objects[i].Type + "is touched by " + j; }
+                    //        game.ObjectTouched(objects[i], Joint.Other);
+                    //        break;
+                    //    }
+                    //}
                 }
             }
         }
@@ -235,6 +231,11 @@ namespace KinectGame
         private double SQR_Distance(ColorSpacePoint a, Point b)
         {
             return Math.Sqrt((((a.X) - (b.X)) * ((a.X) - (b.X))) + (((a.Y) - (b.Y)) * ((a.Y) - (b.Y))));
+        }
+
+        private ColorSpacePoint ConvertSpace(CameraSpacePoint p)
+        {
+            return sensor.CoordinateMapper.MapCameraPointToColorSpace(p);
         }
 
         private void add_to_list(Body body)
