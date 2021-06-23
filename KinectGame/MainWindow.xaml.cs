@@ -40,12 +40,11 @@ namespace KinectGame
 
         private float SpineShoudler { get; set; }
 
-        private DispatcherTimer DelayTimer;
-
+      
       
         private bool DEBUGMODE;
 
-        private bool TouchEnable;
+       
 
         public MainWindow()
         {
