@@ -154,7 +154,7 @@ namespace KinectGame
                     if (ConvertSpace(body.Joints[JointType.HandRight].Position).Y < ConvertSpace(body.Joints[JointType.ElbowRight].Position).Y && SpineShoudler > 1.5)
                     {
                         Debug.WriteLine(body.Joints[JointType.HandRight].Position.Y + " " + body.Joints[JointType.ElbowRight].Position.Y);
-                        game.gameStatus = GameStatus.NotStartYet;
+                        game.gameStatus = GameStatus.StartFromPause;
                         game.StartGame();
                         game.gameStatus = GameStatus.Gaming;
                         pauseTextBox.Visibility = Visibility.Hidden;
@@ -349,21 +349,13 @@ namespace KinectGame
 
         private void startBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (game.gameStatus == GameStatus.NotStartYet)
-            {
 
+            game.gameStatus = GameStatus.NotStartYet;
                 game.StartGame();
-                BackgroundImage.Source = null;
-                //  startBtn.Content = "Pause";
-
-                startBtn.Visibility = Visibility.Hidden;
                 game.gameStatus = GameStatus.Gaming;
-            }
-            //else if (game.gameStatus == GameStatus.Gaming)
-            //{
-            //    game.StartGame();
-            //    startBtn.Content = "Start";
-            //}
+
+            
+           
         }
 
         private void startBtn_MouseEnter(object sender, MouseEventArgs e)

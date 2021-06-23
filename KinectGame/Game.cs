@@ -14,6 +14,7 @@ namespace KinectGame {
         NotStartYet,
         Gaming,
         Pause,
+        StartFromPause,
         GameOver
     }
 
@@ -53,9 +54,10 @@ namespace KinectGame {
             this.imageSourceBoarder = sourceBoarder;
             this.GameWindow = _GameWindow;
             this.objects = new List<BaseObject>();
+            this.gameStatus = GameStatus.NotStartYet;
             this.PlayerScore = 0;
             this.PlayerHealth = 3;
-            this.gameStatus = GameStatus.NotStartYet;
+            
 
             timer = new DispatcherTimer();
             timer.Tick += new EventHandler(randomObjects);
@@ -167,9 +169,34 @@ namespace KinectGame {
         {
             if (gameStatus == GameStatus.NotStartYet)
             {
+               
+                PlayerScore = 0;
+                PlayerHealth = 3;
+                timer = new DispatcherTimer();
+                timer.Tick += new EventHandler(randomObjects);
+                timer.Interval = new TimeSpan(0, 0, 2);
+                TotalTime = 15;
+                dt = new DispatcherTimer();
+                dt.Interval = new TimeSpan(0, 0, 1);
+                dt.Tick += dtTicker;
+                GameWindow.SumupGroup.Visibility = Visibility.Hidden;
+                GameWindow.startBtn.Visibility = Visibility.Hidden;
+                GameWindow.BackgroundImage.Visibility = Visibility.Hidden;
                 timer.Start();
                 dt.Start();
-            } else
+
+            }
+            else if(gameStatus == GameStatus.Pause)
+            {
+                timer.Stop();
+                dt.Stop();
+            }
+            else if(gameStatus == GameStatus.StartFromPause)
+            {
+                timer.Start();
+                dt.Start();
+            }
+            else
             {
                 canvas.Children.Clear();
                 timer.Stop();
@@ -217,6 +244,8 @@ namespace KinectGame {
             GameWindow.Sum_Score_Title.Content = "Score Sum: " + PlayerScore.ToString();
             GameWindow.Sum_Life_Title.Content = "Life Left: " + PlayerHealth.ToString();
             gameStatus = GameStatus.GameOver;
+            GameWindow.startBtn.Visibility = Visibility.Visible;
+            GameWindow.BackgroundImage.Visibility = Visibility.Visible;
         }
     }
 }
