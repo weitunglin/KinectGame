@@ -9,8 +9,10 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
-namespace KinectGame {
-    public enum GameStatus{
+namespace KinectGame
+{
+    public enum GameStatus
+    {
         NotStartYet,
         Gaming,
         Pause,
@@ -26,7 +28,8 @@ namespace KinectGame {
         Other = -1
     }
 
-    public class Game {
+    public class Game
+    {
         public GameStatus gameStatus { get; set; }
         private Random random = null;
         private Canvas canvas = null;
@@ -41,7 +44,8 @@ namespace KinectGame {
         public int PlayerScore { get; set; }
         public int TotalTime;
         private int Minutes { get { return TotalTime / 60; } }
-        private int Seconds{ get { return TotalTime % 60; } }
+        private int Seconds { get { return TotalTime % 60; } }
+        public int CountDown;
 
         public List<BaseObject> getObjects() { return objects; }
 
@@ -57,12 +61,13 @@ namespace KinectGame {
             this.gameStatus = GameStatus.NotStartYet;
             this.PlayerScore = 0;
             this.PlayerHealth = 3;
-            
+
 
             timer = new DispatcherTimer();
             timer.Tick += new EventHandler(randomObjects);
             timer.Interval = new TimeSpan(0, 0, 2);
             TotalTime = 15;
+            CountDown = 3;
             dt = new DispatcherTimer();
             dt.Interval = new TimeSpan(0, 0, 1);
             dt.Tick += dtTicker;
@@ -83,7 +88,7 @@ namespace KinectGame {
                 BaseObject item = null;
 
                 bool NoDuplicate = false;
-                while(!NoDuplicate)
+                while (!NoDuplicate)
                 {
                     x = random.Next(192, 1920 - 192 - 100);
                     y = random.Next(108, 1080 - 108 - 100);
@@ -149,19 +154,43 @@ namespace KinectGame {
 
         private void dtTicker(object sender, EventArgs e)
         {
-            TotalTime--;
-            if (TotalTime <= 0)
+            if (CountDown > 0)
             {
-                endGame();
-            }
-            else if (TotalTime <= 10)
-            {
-                GameWindow.GameTimer.Foreground = Brushes.Red;
-                GameWindow.GameTimer.Text = Minutes.ToString() + ":" + Seconds.ToString();
+                GameWindow.countDownTxt.Visibility = Visibility.Visible;
+               
+                switch (CountDown)
+                {
+                    case 3:
+                        GameWindow.countDownTxt.Text = "3";
+                        break;
+                    case 2:
+                        GameWindow.countDownTxt.Text = "2";
+                        break;
+                    case 1:
+                        GameWindow.countDownTxt.Text = "1";
+                        break;
+                }
+                CountDown--;
+                return;
             }
             else
             {
-                GameWindow.GameTimer.Text = Minutes.ToString() + ":" + Seconds.ToString();
+                GameWindow.countDownTxt.Visibility = Visibility.Hidden;
+                timer.Start();
+                TotalTime--;
+                if (TotalTime <= 0)
+                {
+                    endGame();
+                }
+                else if (TotalTime <= 10)
+                {
+                    GameWindow.GameTimer.Foreground = Brushes.Red;
+                    GameWindow.GameTimer.Text = Minutes.ToString() + ":" + Seconds.ToString();
+                }
+                else
+                {
+                    GameWindow.GameTimer.Text = Minutes.ToString() + ":" + Seconds.ToString();
+                }
             }
         }
 
@@ -169,31 +198,36 @@ namespace KinectGame {
         {
             if (gameStatus == GameStatus.NotStartYet)
             {
-               
+
                 PlayerScore = 0;
                 PlayerHealth = 3;
                 timer = new DispatcherTimer();
                 timer.Tick += new EventHandler(randomObjects);
                 timer.Interval = new TimeSpan(0, 0, 2);
                 TotalTime = 15;
+                CountDown = 3;
                 dt = new DispatcherTimer();
                 dt.Interval = new TimeSpan(0, 0, 1);
                 dt.Tick += dtTicker;
                 GameWindow.SumupGroup.Visibility = Visibility.Hidden;
                 GameWindow.startBtn.Visibility = Visibility.Hidden;
                 GameWindow.BackgroundImage.Visibility = Visibility.Hidden;
-                timer.Start();
+                GameWindow.Health_bar.Value = PlayerHealth;
+                GameWindow.Score_Text.Text = PlayerScore.ToString();
+                GameWindow.GameTimer.Text = Minutes.ToString() + ":" + Seconds.ToString();
+                GameWindow.GameTimer.Foreground = Brushes.Black;
                 dt.Start();
 
             }
-            else if(gameStatus == GameStatus.Pause)
+            else if (gameStatus == GameStatus.Pause)
             {
+                GameWindow.countDownTxt.Visibility = Visibility.Hidden;
                 timer.Stop();
                 dt.Stop();
             }
-            else if(gameStatus == GameStatus.StartFromPause)
+            else if (gameStatus == GameStatus.StartFromPause)
             {
-                timer.Start();
+                CountDown = 3;
                 dt.Start();
             }
             else

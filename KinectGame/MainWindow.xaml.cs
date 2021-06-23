@@ -39,7 +39,7 @@ namespace KinectGame
 
         private float SpineShoudler { get; set; }
 
-        private GameStatus gameStatus = GameStatus.NotStartYet;
+       // private GameStatus gameStatus = GameStatus.NotStartYet;
         private bool DEBUGMODE;
 
 
@@ -59,7 +59,7 @@ namespace KinectGame
             this.sensor.Open();
 
             this.game = new Game(this.ImageCanvas, this.ImageSource.Width, this.ImageSource.Height, 150, this);
-            DEBUGMODE = true;
+            DEBUGMODE = false;
 
             FlowDocument pauseDoc = new FlowDocument();
             Paragraph pause = new Paragraph();
@@ -93,6 +93,8 @@ namespace KinectGame
                             this.bitmap.BackBuffer,
                             (uint)(this.frameDescription.Width * this.frameDescription.Height * 4),
                             ColorImageFormat.Bgra);
+
+                       
 
                         this.bitmap.AddDirtyRect(new Int32Rect(0, 0, this.bitmap.PixelWidth, this.bitmap.PixelHeight));
                     }
@@ -147,7 +149,7 @@ namespace KinectGame
                 //CameraSpacePoint lefthand_ = body.Joints[JointType.HandLeft].Position;
 
                 SpineShoudler = body.Joints[JointType.SpineShoulder].Position.Z;
-                SpineShoulderDepthTxt.Text = SpineShoudler.ToString();
+                if (DEBUGMODE) { SpineShoulderDepthTxt.Text = SpineShoudler.ToString(); }
 
                 if (game.gameStatus == GameStatus.Pause)
                 {
@@ -161,72 +163,74 @@ namespace KinectGame
                         pauseText.Visibility = Visibility.Hidden;
                     }
                 }
-
-                if (SpineShoudler <= 1.5 && game.gameStatus == GameStatus.Gaming)
+                else if (game.gameStatus == GameStatus.Gaming)
                 {
-                    game.gameStatus = GameStatus.Pause;
-                    game.StartGame();
-                }
-
-                for (int i = 0; i < objects.Count && !objects[i].IsTouched; i++)
-                {
-                    ColorSpacePoint pos_R;
-                    if (body.Joints[JointType.HandRight].TrackingState != TrackingState.NotTracked)
+                    if (SpineShoudler <= 1.5 && game.gameStatus == GameStatus.Gaming)
                     {
-                        pos_R = ConvertSpace(body.Joints[JointType.HandRight].Position);
-                    }
-                    else
-                    {
-                        pos_R = ConvertSpace(body.Joints[JointType.WristRight].Position);
-
-                    }
-                    if (SQR_Distance(pos_R, objects[i].Position) <= 100)
-                    {
-                        objects[i].IsTouched = true;
-                        Debug.WriteLine(objects[i].Type + " is touched by righthand");
-
-                        // Debug.WriteLine(objects[i].Position.ToString() + " " + pos[(int)Joint.Righthand].X.ToString() + pos[(int)Joint.Righthand].Y.ToString());
-                        game.ObjectTouched(objects[i], Joint.Righthand);
-
-                        // if (DEBUGMODE) { Touch.Text = objects[i].Type + "is touched by righthand"; }
-
-                        continue;
-                    }
-                    ColorSpacePoint pos_L;
-                    if (body.Joints[JointType.HandLeft].TrackingState != TrackingState.NotTracked)
-                    {
-                        pos_L = ConvertSpace(body.Joints[JointType.HandLeft].Position);
-                    }
-                    else
-                    {
-                        pos_L = ConvertSpace(body.Joints[JointType.WristLeft].Position);
-
+                        game.gameStatus = GameStatus.Pause;
+                        game.StartGame();
                     }
 
-                     if (SQR_Distance(pos_L, objects[i].Position) <= 100)
+                    for (int i = 0; i < objects.Count && !objects[i].IsTouched; i++)
                     {
-                        objects[i].IsTouched = true;
-                        Debug.WriteLine(objects[i].Type + " is touched by lefthand");
+                        ColorSpacePoint pos_R;
+                        if (body.Joints[JointType.HandRight].TrackingState != TrackingState.NotTracked)
+                        {
+                            pos_R = ConvertSpace(body.Joints[JointType.HandRight].Position);
+                        }
+                        else
+                        {
+                            pos_R = ConvertSpace(body.Joints[JointType.WristRight].Position);
 
-                        // Debug.WriteLine(objects[i].Position.ToString() + " " + pos[(int)Joint.Lefthand].X.ToString() + pos[(int)Joint.Lefthand].Y.ToString());
-                        game.ObjectTouched(objects[i], Joint.Lefthand);
+                        }
+                        if (SQR_Distance(pos_R, objects[i].Position) <= 100)
+                        {
+                            objects[i].IsTouched = true;
+                            Debug.WriteLine(objects[i].Type + " is touched by righthand");
 
-                        // if (DEBUGMODE) { Touch.Text = objects[i].Type + "is touched by lefthand"; }
+                            // Debug.WriteLine(objects[i].Position.ToString() + " " + pos[(int)Joint.Righthand].X.ToString() + pos[(int)Joint.Righthand].Y.ToString());
+                            game.ObjectTouched(objects[i], Joint.Righthand);
 
-                        continue;
+                            // if (DEBUGMODE) { Touch.Text = objects[i].Type + "is touched by righthand"; }
+
+                            continue;
+                        }
+                        ColorSpacePoint pos_L;
+                        if (body.Joints[JointType.HandLeft].TrackingState != TrackingState.NotTracked)
+                        {
+                            pos_L = ConvertSpace(body.Joints[JointType.HandLeft].Position);
+                        }
+                        else
+                        {
+                            pos_L = ConvertSpace(body.Joints[JointType.WristLeft].Position);
+
+                        }
+
+                        if (SQR_Distance(pos_L, objects[i].Position) <= 100)
+                        {
+                            objects[i].IsTouched = true;
+                            Debug.WriteLine(objects[i].Type + " is touched by lefthand");
+
+                            // Debug.WriteLine(objects[i].Position.ToString() + " " + pos[(int)Joint.Lefthand].X.ToString() + pos[(int)Joint.Lefthand].Y.ToString());
+                            game.ObjectTouched(objects[i], Joint.Lefthand);
+
+                            // if (DEBUGMODE) { Touch.Text = objects[i].Type + "is touched by lefthand"; }
+
+                            continue;
+                        }
+                        //for (int j = 0; j < pos.Count; j++)
+                        //{
+                        //    if (SQR_Distance(pos[j], objects[i].Position) <= 100)
+                        //    {
+                        //        objects[i].IsTouched = true;
+                        //        Debug.WriteLine(objects[i].Id + "is touched by " + j);
+                        //        Debug.WriteLine(objects[i].Position.ToString() + " " + pos[j].X.ToString() + " " + pos[j].Y.ToString());
+                        //        if (DEBUGMODE) { Touch.Text = objects[i].Type + "is touched by " + j; }
+                        //        game.ObjectTouched(objects[i], Joint.Other);
+                        //        break;
+                        //    }
+                        //}
                     }
-                    //for (int j = 0; j < pos.Count; j++)
-                    //{
-                    //    if (SQR_Distance(pos[j], objects[i].Position) <= 100)
-                    //    {
-                    //        objects[i].IsTouched = true;
-                    //        Debug.WriteLine(objects[i].Id + "is touched by " + j);
-                    //        Debug.WriteLine(objects[i].Position.ToString() + " " + pos[j].X.ToString() + " " + pos[j].Y.ToString());
-                    //        if (DEBUGMODE) { Touch.Text = objects[i].Type + "is touched by " + j; }
-                    //        game.ObjectTouched(objects[i], Joint.Other);
-                    //        break;
-                    //    }
-                    //}
                 }
             }
         }
@@ -237,6 +241,8 @@ namespace KinectGame
         {
             this.ImageSource.Source = this.bitmap;
             pauseTextBox.Visibility = Visibility.Hidden;
+            countDownTxt.Visibility = Visibility.Hidden;
+            countDownTxt.FontSize = 128;
         }
 
         private void Kinect_Class2_Unloaded(object sender, RoutedEventArgs e)
