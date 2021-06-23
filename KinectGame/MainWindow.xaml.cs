@@ -14,6 +14,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Drawing;
 using Microsoft.Kinect;
+using System.Diagnostics;
+using System. Windows.Threading;
 
 namespace KinectGame
 {
@@ -32,8 +34,17 @@ namespace KinectGame
 
         private Body[] bodies = null;
 
-        //private Objects[] objects = null // initial object memory space
-        //private int objectsNum ;
+        private Game game = null;
+
+        private List<ColorSpacePoint> pos = new List<ColorSpacePoint>();
+
+        private float SpineShoudler { get; set; }
+
+      
+      
+        private bool DEBUGMODE;
+
+       
 
         public MainWindow()
         {
@@ -49,6 +60,25 @@ namespace KinectGame
 
             this.bitmap = new WriteableBitmap(this.frameDescription.Width, this.frameDescription.Height, 96, 96, PixelFormats.Bgr32, null);
             this.sensor.Open();
+
+            this.game = new Game(this.ImageCanvas,this.PointCanvas, this.ImageSource.Width, this.ImageSource.Height, 150, this);
+            DEBUGMODE = false;
+
+            
+
+            FlowDocument pauseDoc = new FlowDocument();
+            Paragraph pause = new Paragraph();
+            pause.Background = Brushes.LightSalmon;
+            // from allen, do not blame me
+            pause.Inlines.Add(new Run("\n\nPaused\n\n") { FontSize = 26, FontFamily = new FontFamily("Showcard Gothic") });
+            pause.Inlines.Add(new Run("Please stand a little further!") { FontSize = 36, Foreground = Brushes.Red, FontFamily = new FontFamily("Showcard Gothic") });
+            pauseDoc.Blocks.Add(pause);
+            pauseDoc.TextAlignment = TextAlignment.Center;
+            this.pauseTextBox.Document = pauseDoc;
+            startBtn_Image.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "../../../Source/start.png"));
+            BackgroundImage.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "../../../Source/background.jpeg"));
+            game.gameStatus = GameStatus.NotStartYet;
+            SumupGroup.Visibility = Visibility.Hidden;
         }
 
         private void ColorFrameReader_FrameArrived(object sender, ColorFrameArrivedEventArgs e)
@@ -62,8 +92,6 @@ namespace KinectGame
                 {
 
                     this.bitmap.Lock();
-                    //object = Game.getObjects();
-                    //objectsNum = Game.getObjectsNum();
                     if (this.frameDescription.Width == this.bitmap.PixelWidth && this.frameDescription.Height == this.bitmap.PixelHeight)
                     {
                         colorFrame.CopyConvertedFrameDataToIntPtr(
@@ -71,10 +99,20 @@ namespace KinectGame
                             (uint)(this.frameDescription.Width * this.frameDescription.Height * 4),
                             ColorImageFormat.Bgra);
 
+                       
+
                         this.bitmap.AddDirtyRect(new Int32Rect(0, 0, this.bitmap.PixelWidth, this.bitmap.PixelHeight));
                     }
 
                     this.bitmap.Unlock();
+
+
+        
+
+                    if (game.gameStatus == GameStatus.Pause)
+                    {
+                        pauseTextBox.Visibility = Visibility.Visible;
+                    }
                 }
             }
         }
@@ -83,105 +121,105 @@ namespace KinectGame
         {
             using (var frame = e.FrameReference.AcquireFrame())
             {
-                if (frame != null)
+                if (frame == null)
                 {
-                    if (this.bodies == null)
+                    return;
+                }
+
+                if (this.bodies == null)
+                {
+                    this.bodies = new Body[frame.BodyCount];
+                }
+
+                frame.GetAndRefreshBodyData(bodies);
+
+                Body body = bodies.Where(b => b.IsTracked).FirstOrDefault();
+
+                if (body == null)
+                {
+                    if (DEBUGMODE) { txtLeft.Text = "No body"; }
+                    return;
+                }
+
+
+                List<BaseObject> objects = game.getObjects();
+                if (DEBUGMODE)
+                {
+                    txtLeft.Text = ConvertSpace(body.Joints[JointType.HandRight].Position).X + "\n" + ConvertSpace(body.Joints[JointType.HandRight].Position).Y + "\n";
+                    txtRight.Text = ConvertSpace(body.Joints[JointType.HandLeft].Position).X + "\n" + ConvertSpace(body.Joints[JointType.HandLeft].Position).Y + "\n";
+                }
+               
+
+                SpineShoudler = body.Joints[JointType.SpineShoulder].Position.Z;
+                if (DEBUGMODE) { SpineShoulderDepthTxt.Text = SpineShoudler.ToString(); }
+
+                if (game.gameStatus == GameStatus.Pause)
+                {
+                    if (ConvertSpace(body.Joints[JointType.HandRight].Position).Y < ConvertSpace(body.Joints[JointType.ElbowRight].Position).Y && SpineShoudler > 1.5)
                     {
-                        this.bodies = new Body[frame.BodyCount];
+                        Debug.WriteLine(body.Joints[JointType.HandRight].Position.Y + " " + body.Joints[JointType.ElbowRight].Position.Y);
+                        game.gameStatus = GameStatus.StartFromPause;
+                        game.StartGame();
+                        game.gameStatus = GameStatus.Gaming;
+                        pauseTextBox.Visibility = Visibility.Hidden;
+                        pauseText.Visibility = Visibility.Hidden;
                     }
-                    frame.GetAndRefreshBodyData(bodies);
-
-                    Body body = bodies.Where(b => b.IsTracked).FirstOrDefault();
-                    if (body == null)
+                }
+                else if (game.gameStatus == GameStatus.Gaming)
+                {
+                    if (SpineShoudler <= 1.5 && game.gameStatus == GameStatus.Gaming)
                     {
-                        return;
+                        game.gameStatus = GameStatus.Pause;
+                        game.StartGame();
                     }
-                    List<Point> pos = new List<Point>();
 
+                  
 
-                    //torso
-                    Point head_pos = new Point(body.Joints[JointType.Head].Position.X, body.Joints[JointType.Head].Position.Y);
-                    Point spineshoulder_pos = new Point(body.Joints[JointType.SpineShoulder].Position.X, body.Joints[JointType.SpineShoulder].Position.Y);
-                    Point leftshoulder_pos = new Point(body.Joints[JointType.ShoulderLeft].Position.X, body.Joints[JointType.ShoulderLeft].Position.Y);
-                    Point rightshoulder_pos = new Point(body.Joints[JointType.ShoulderRight].Position.X, body.Joints[JointType.ShoulderRight].Position.Y);
-                    Point lefthip_pos = new Point(body.Joints[JointType.HipLeft].Position.X, body.Joints[JointType.HipLeft].Position.Y);
-                    Point righthip_pos = new Point(body.Joints[JointType.HipRight].Position.X, body.Joints[JointType.HipRight].Position.Y);
+                    for (int i = 0; i < objects.Count && !objects[i].IsTouched; i++)
+                    {
+                        ColorSpacePoint pos_R;
+                        if (body.Joints[JointType.HandRight].TrackingState != TrackingState.NotTracked)
+                        {
+                            pos_R = ConvertSpace(body.Joints[JointType.HandRight].Position);
+                        }
+                        else
+                        {
+                            pos_R = ConvertSpace(body.Joints[JointType.WristRight].Position);
 
-                    pos.Add(head_pos);
-                    pos.Add(spineshoulder_pos);
-                    pos.Add(leftshoulder_pos);
-                    pos.Add(rightshoulder_pos);
-                    pos.Add(lefthip_pos);
-                    pos.Add(righthip_pos);
+                        }
+                        if (SQR_Distance(pos_R, objects[i].Position) <= 100)
+                        {
+                            objects[i].IsTouched = true;
+                            Debug.WriteLine(objects[i].Type + " is touched by righthand");
+                            game.ObjectTouched(objects[i], Joint.Righthand);
 
-                    //right hand
-                    Point righthand_pos = new Point(body.Joints[JointType.HandRight].Position.X, body.Joints[JointType.HandRight].Position.Y);
-                    Point rightelbow_pos = new Point(body.Joints[JointType.ElbowRight].Position.X, body.Joints[JointType.ElbowRight].Position.Y);
-                    Point rightwrist_pos = new Point(body.Joints[JointType.WristRight].Position.X, body.Joints[JointType.WristRight].Position.Y);
+                            if (DEBUGMODE) { Touch.Text = objects[i].Type + "is touched by righthand"; }
 
-                    pos.Add(righthand_pos);
-                    pos.Add(rightelbow_pos);
-                    pos.Add(rightwrist_pos);
+                            continue;
+                        }
+                        ColorSpacePoint pos_L;
+                        if (body.Joints[JointType.HandLeft].TrackingState != TrackingState.NotTracked)
+                        {
+                            pos_L = ConvertSpace(body.Joints[JointType.HandLeft].Position);
+                        }
+                        else
+                        {
+                            pos_L = ConvertSpace(body.Joints[JointType.WristLeft].Position);
 
-                    //left hand
-                    Point leftthand_pos = new Point(body.Joints[JointType.HandLeft].Position.X, body.Joints[JointType.HandLeft].Position.Y);
-                    Point leftelbow_pos = new Point(body.Joints[JointType.ElbowLeft].Position.X, body.Joints[JointType.ElbowLeft].Position.Y);
-                    Point leftwrist_pos = new Point(body.Joints[JointType.WristLeft].Position.X, body.Joints[JointType.WristLeft].Position.Y);
+                        }
 
-                    pos.Add(leftthand_pos);
-                    pos.Add(leftelbow_pos);
-                    pos.Add(leftwrist_pos);
+                        if (SQR_Distance(pos_L, objects[i].Position) <= 100)
+                        {
+                            objects[i].IsTouched = true;
+                            Debug.WriteLine(objects[i].Type + " is touched by lefthand");
+                            game.ObjectTouched(objects[i], Joint.Lefthand);
 
+                            if (DEBUGMODE) { Touch.Text = objects[i].Type + "is touched by lefthand"; }
 
-                    //right leg
-                    Point rightknee_pos = new Point(body.Joints[JointType.KneeRight].Position.X, body.Joints[JointType.KneeRight].Position.Y);
-                    Point rightankel_pos = new Point(body.Joints[JointType.AnkleRight].Position.X, body.Joints[JointType.AnkleRight].Position.Y);
-                    Point rightfoot_pos = new Point(body.Joints[JointType.FootRight].Position.X, body.Joints[JointType.FootRight].Position.Y);
+                            continue;
+                        }
 
-                    pos.Add(rightknee_pos);
-                    pos.Add(rightankel_pos);
-                    pos.Add(rightfoot_pos);
-
-                    //left leg
-                    Point leftknee_pos = new Point(body.Joints[JointType.KneeLeft].Position.X, body.Joints[JointType.KneeLeft].Position.Y);
-                    Point leftankel_pos = new Point(body.Joints[JointType.AnkleLeft].Position.X, body.Joints[JointType.AnkleLeft].Position.Y);
-                    Point leftfoot_pos = new Point(body.Joints[JointType.FootLeft].Position.X, body.Joints[JointType.FootLeft].Position.Y);
-
-                    pos.Add(leftknee_pos);
-                    pos.Add(leftankel_pos);
-                    pos.Add(leftfoot_pos);
-
-
-                    CameraSpacePoint HLpoint = body.Joints[JointType.HandLeft].Position;
-                    CameraSpacePoint HRpoint = body.Joints[JointType.HandRight].Position;
-                    ColorSpacePoint colorPointL = sensor.CoordinateMapper.MapCameraPointToColorSpace(HLpoint);
-                    DepthSpacePoint depthPointL = sensor.CoordinateMapper.MapCameraPointToDepthSpace(HLpoint);
-                    ColorSpacePoint colorPointR = sensor.CoordinateMapper.MapCameraPointToColorSpace(HRpoint);
-                    DepthSpacePoint depthPointR = sensor.CoordinateMapper.MapCameraPointToDepthSpace(HRpoint);
-                    txtLeft.Text = colorPointL.X.ToString() + "\n" + colorPointL.Y.ToString() + "\n" + depthPointL.X.ToString() + "\n" + depthPointL.Y.ToString();
-                    txtRight.Text = colorPointR.X.ToString() + "\n" + colorPointR.Y.ToString() + "\n" + depthPointR.X.ToString() + "\n" + depthPointL.Y.ToString();
-
-                    //txtLeft.Text = body.Joints[JointType.HandLeft].Position.X.ToString() + "\n" + body.Joints[JointType.HandLeft].Position.Y.ToString() + "\n" + body.Joints[JointType.HandLeft].Position.Z.ToString();
-                    // txtRight.Text = body.Joints[JointType.HandRight].Position.X.ToString() + "\n" + body.Joints[JointType.HandRight].Position.Y.ToString() +"\n" + body.Joints[JointType.HandRight].Position.Z.ToString();
-
-
-
-
-
-                    //for (int i = 0; i < objectsNum; i++)
-                    //{
-                    //    //if (righthand_pos == objects[i].Position)
-                    //    //{
-                    //    //    objects[i].IsTouched = true ;
-                    //    //}
-                    //    for (int j = 0; j < 18 ; j++)
-                    //    {
-                    //        if (SQR_Distance(pos[j],objects[i]) <= 300*300)
-                    //        {
-                    //            objects[i].isTouched() = true;
-                    //        }
-                    //    }
-                    //}
+                    }
                 }
             }
         }
@@ -191,6 +229,9 @@ namespace KinectGame
         private void Kinect_Class2_Loaded(object sender, RoutedEventArgs e)
         {
             this.ImageSource.Source = this.bitmap;
+            pauseTextBox.Visibility = Visibility.Hidden;
+            countDownTxt.Visibility = Visibility.Hidden;
+            countDownTxt.FontSize = 128;
         }
 
         private void Kinect_Class2_Unloaded(object sender, RoutedEventArgs e)
@@ -208,11 +249,41 @@ namespace KinectGame
             }
         }
 
-        private double SQR_Distance(Point a, Point b)
+
+        private double SQR_Distance(ColorSpacePoint a, Point b)
         {
-            return ((a.X * a.X) - (b.X * b.X) + (a.Y) * (a.Y) - (b.Y) * (b.Y));
+            return Math.Sqrt((((a.X) - (b.X)) * ((a.X) - (b.X))) + (((a.Y) - (b.Y)) * ((a.Y) - (b.Y))));
+        }
+
+        private ColorSpacePoint ConvertSpace(CameraSpacePoint p)
+        {
+            return sensor.CoordinateMapper.MapCameraPointToColorSpace(p);
         }
 
 
+
+        private void startBtn_Click(object sender, RoutedEventArgs e)
+        {
+
+            game.gameStatus = GameStatus.NotStartYet;
+                game.StartGame();
+                game.gameStatus = GameStatus.Gaming;
+
+            
+           
+        }
+
+        private void startBtn_MouseEnter(object sender, MouseEventArgs e)
+        {
+            startBtn_Image.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "../../../Source/ystart.png"));
+        }
+
+        private void startBtn_MouseLeave(object sender, MouseEventArgs e)
+        {
+            startBtn_Image.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "../../../Source/start.png"));
+        }
+
+       
     }
 }
+

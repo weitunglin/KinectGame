@@ -8,9 +8,53 @@
         Title="MainWindow" Height="900" Width="1560" ResizeMode="CanMinimize"
         Loaded="Kinect_Class2_Loaded" Unloaded="Kinect_Class2_Unloaded">
     <Grid>
-        <TextBlock x:Name="txtLeft" Height="60" Margin="10,74,1410.6,736.4">txt left</TextBlock>
-        <TextBlock x:Name="txtRight" Height="60" Margin="10,139,1410.6,671.4">txt right</TextBlock>
-        <Image x:Name="ImageSource" HorizontalAlignment="Left" Height="720" Margin="148,10,0,0" VerticalAlignment="Top" Width="1280"/>
-        <Canvas x:Name="ImageCanvas"  HorizontalAlignment="Left" Height="720" Margin="148,10,0,0" VerticalAlignment="Top" Width="1280" Background="Transparent"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0*"/>
+            <ColumnDefinition Width="0*"/>
+            <ColumnDefinition Width="0*"/>
+            <ColumnDefinition Width="0*"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <Image x:Name="ImageSource" HorizontalAlignment="Left" Height="720" Margin="143,51,0,0" VerticalAlignment="Top" Width="1280" Grid.ColumnSpan="5"/>
+        <Canvas x:Name="PointCanvas"  HorizontalAlignment="Left" Height="720" Margin="148,51,0,0" VerticalAlignment="Top" Width="1280"  Grid.ColumnSpan="5"></Canvas>
+        <Canvas x:Name="ImageCanvas"  HorizontalAlignment="Left" Height="720" Margin="148,51,0,0" VerticalAlignment="Top" Width="1280" Background="Transparent" Grid.ColumnSpan="5">
+        </Canvas>
+        <Canvas Grid.ColumnSpan="5">
+            <Image x:Name="BackgroundImage" Height="871" Width="1554"/>
+            <RichTextBox x:Name="pauseTextBox" Canvas.Left="501" Width="610" Height="180" BorderBrush="Black" BorderThickness="5" Background="LightSalmon" Canvas.Top="325" Visibility="Hidden"/>
+            <TextBox x:Name="pauseText" Text="Please stand a little bit further!" Canvas.Left="513" Canvas.Top="362" Width="597" Height="191" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="30" FontFamily="Showcard Gothic" BorderBrush="Black" Background="#FFFFA0A0" BorderThickness="5" Visibility="Hidden"/>
+            <TextBlock x:Name="Touch" TextWrapping="Wrap" Canvas.Top="432" Height="383" Width="145"/>
+            <Border x:Name="TimerBorder" BorderBrush="Black" BorderThickness="3" Height="42" Canvas.Left="1222" Width="144" CornerRadius="8">
+                <TextBox x:Name="GameTimer" Canvas.Left="1090" TextWrapping="Wrap" Text="Timer" Canvas.Top="-42" TextAlignment="Center" Background="{x:Null}" FontSize="25" BorderBrush="{x:Null}" BorderThickness="3" Margin="7,0,7,-3" FontWeight="Bold" FontFamily="Showcard Gothic" />
+            </Border>
+            <ProgressBar x:Name="Health_bar" Height="42" Canvas.Left="324" Width="217" Value="3" Padding="6,0,0,0" Foreground="#FFFF3F3F" Background="#FFB67B7B" Maximum="3" Focusable="True"/>
+            <TextBox x:Name="Health_text" Height="42" Canvas.Left="206" TextWrapping="Wrap" Text="Health:" Width="113" FontFamily="Showcard Gothic" FontSize="25" Background="{x:Null}" BorderBrush="{x:Null}" Canvas.Top="5"/>
+            <TextBox x:Name="Score_Title" Height="42" Canvas.Left="866" TextWrapping="Wrap" Text="Score:" Width="113" FontFamily="Showcard Gothic" FontSize="25" Canvas.Top="5" Background="{x:Null}" BorderBrush="{x:Null}"/>
+            <TextBox x:Name="Score_Text" Height="42" Canvas.Left="960" TextWrapping="Wrap" Text="0" Width="113" FontFamily="Showcard Gothic" FontSize="25" Canvas.Top="5" Background="{x:Null}" BorderBrush="{x:Null}"/>
+            <TextBlock x:Name="countDownTxt" Canvas.Left="627" TextWrapping="Wrap" Text="TextBlock" Canvas.Top="287" Height="410" Width="307" FontFamily="Showcard Gothic" FontSize="72" FontWeight="Bold" TextAlignment="Center"/>
+        </Canvas>
+        <TextBlock x:Name="txtLeft" Height="60" Margin="10,74,1410,737" Grid.ColumnSpan="5"></TextBlock>
+        <TextBlock x:Name="txtRight" Height="60" Margin="10,139,1410,672" Grid.ColumnSpan="5"></TextBlock>
+        <TextBlock x:Name="SpineShoulderDepthTxt" Height="60" Margin="10,260,1410,551" Grid.ColumnSpan="5"></TextBlock>
+        <TextBlock x:Name="Pause" Height="60" Grid.ColumnSpan="5" Margin="0,406,1554,405"><Run Text="Pause"/></TextBlock>
+        <Button x:Name="startBtn" Grid.ColumnSpan="5" Margin="544,494,475,208" RenderTransformOrigin="0.5,0.5" Click="startBtn_Click" BorderThickness="0" Background="#00DDDDDD" MouseEnter="startBtn_MouseEnter" MouseLeave="startBtn_MouseLeave" Style="{StaticResource NormalMouseButton}">
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="0.012"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+
+            </Button.RenderTransform>
+            <Image x:Name="startBtn_Image" Height="168" Width="533" Stretch="Fill"/>
+        </Button>
+        <GroupBox x:Name="SumupGroup" Grid.ColumnSpan="5" Header="Total" HorizontalAlignment="Left" Height="194" VerticalAlignment="Top" Width="484" Margin="552,294,0,0" FontFamily="Showcard Gothic" FontSize="25" Background="#FF9E9E00" BorderBrush="#00D5DFE5" BorderThickness="0">
+            <StackPanel HorizontalAlignment="Left" Height="154" Margin="0,0,-2,0" VerticalAlignment="Top" Width="474">
+                <Label x:Name="Sum_Score_Title" Content="Score Sum:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontSize="36"/>
+                <Label x:Name="Sum_Life_Title" Content="Life Left:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontSize="36"/>
+            </StackPanel>
+        </GroupBox>
     </Grid>
 </Window>
