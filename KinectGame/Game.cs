@@ -116,6 +116,7 @@ namespace KinectGame {
                     Width = 100,
                     Height = 100,
                     Stretch = Stretch.Uniform,
+                    Uid = item.Id,
                     Source = new BitmapImage(item.ImageUri)
                 };
                 addObjectToCanvas(item, image);
@@ -194,6 +195,15 @@ namespace KinectGame {
                 }
                 GameWindow.Health_bar.Value = PlayerHealth;
                 GameWindow.Score_Text.Text = PlayerScore.ToString();
+
+                for (int i = canvas.Children.Count - 1; i >= 0; --i)
+                {
+                    if (canvas.Children[i].Uid == TouchedObj.Id)
+                    {
+                        canvas.Children.RemoveAt(i);
+                        break;
+                    }
+                }
             }
         }
 

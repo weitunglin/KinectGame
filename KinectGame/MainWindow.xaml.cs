@@ -213,7 +213,7 @@ namespace KinectGame
         private void Kinect_Class2_Loaded(object sender, RoutedEventArgs e)
         {
             this.ImageSource.Source = this.bitmap;
-            pauseTextBox.Visibility = Visibility.Visible;
+            // pauseTextBox.Visibility = Visibility.Visible;
         }
 
         private void Kinect_Class2_Unloaded(object sender, RoutedEventArgs e)
