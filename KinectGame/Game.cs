@@ -350,10 +350,7 @@ namespace KinectGame
                     pointcanvas.Children.Add(points);
                     break;
                 case 0:
-                    pointcanvas.Children.Clear();
-                    //Canvas.SetLeft(points, CurrentTouchedobj.Position.X * 1280.0 / 1920.0);
-                    //Canvas.SetTop(points, (CurrentTouchedobj.Position.Y * 720.0 / 1080.0) - 100);
-                    //pointcanvas.Children.Add(points);             
+                    pointcanvas.Children.Clear();          
                     pointTimer.Stop();
                     break;
             }

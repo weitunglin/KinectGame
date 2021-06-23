@@ -190,7 +190,7 @@ namespace KinectGame
                         if (SQR_Distance(pos_R, objects[i].Position) <= 100)
                         {
                             objects[i].IsTouched = true;
-                            Debug.WriteLine(objects[i].Type + " is touched by righthand");
+                          //  Debug.WriteLine(objects[i].Type + " is touched by righthand");
                             game.ObjectTouched(objects[i], Joint.Righthand);
 
                             if (DEBUGMODE) { Touch.Text = objects[i].Type + "is touched by righthand"; }
@@ -211,7 +211,7 @@ namespace KinectGame
                         if (SQR_Distance(pos_L, objects[i].Position) <= 100)
                         {
                             objects[i].IsTouched = true;
-                            Debug.WriteLine(objects[i].Type + " is touched by lefthand");
+                          //  Debug.WriteLine(objects[i].Type + " is touched by lefthand");
                             game.ObjectTouched(objects[i], Joint.Lefthand);
 
                             if (DEBUGMODE) { Touch.Text = objects[i].Type + "is touched by lefthand"; }
