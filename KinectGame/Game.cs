@@ -66,7 +66,7 @@ namespace KinectGame
             this.gameStatus = GameStatus.NotStartYet;
             this.PlayerScore = 0;
             this.PlayerHealth = 3;
-            TotalTime = 100; ///////////////////////////////////////////////////////////
+            TotalTime = 15; ///////////////////////////////////////////////////////////
             CountDown = 3;
             pointcountdown = 2;
             points = null;
@@ -166,7 +166,7 @@ namespace KinectGame
 
         private void dtTicker(object sender, EventArgs e)
         {
-            if (CountDown > 0)
+            if (CountDown >= 0)
             {
                 GameWindow.countDownTxt.Visibility = Visibility.Visible;
 
@@ -180,6 +180,9 @@ namespace KinectGame
                         break;
                     case 1:
                         GameWindow.countDownTxt.Text = "1";
+                        break;
+                    case 0:
+                        gameStatus = GameStatus.Gaming;
                         break;
                 }
                 CountDown--;
@@ -216,7 +219,7 @@ namespace KinectGame
                 timer = new DispatcherTimer();
                 timer.Tick += new EventHandler(randomObjects);
                 timer.Interval = new TimeSpan(0, 0, 2);
-                TotalTime = 100;
+                TotalTime = 15;
                 CountDown = 3;
                 dt = new DispatcherTimer();
                 dt.Interval = new TimeSpan(0, 0, 1);

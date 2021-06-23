@@ -162,7 +162,7 @@ namespace KinectGame
                         Debug.WriteLine(body.Joints[JointType.HandRight].Position.Y + " " + body.Joints[JointType.ElbowRight].Position.Y);
                         game.gameStatus = GameStatus.StartFromPause;
                         game.StartGame();
-                        game.gameStatus = GameStatus.Gaming;
+                       
                         pauseTextBox.Visibility = Visibility.Hidden;
                         pauseText.Visibility = Visibility.Hidden;
                     }
