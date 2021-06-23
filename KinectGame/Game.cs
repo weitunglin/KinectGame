@@ -270,13 +270,21 @@ namespace KinectGame
                     PlayerHealth = 0;
                     endGame(true);
                 }
-
-                if (PlayerHealth == 2)
+                if (PlayerHealth==3)
                 {
+                    GameWindow.firstLive.Visibility = Visibility.Visible;
+                    GameWindow.secondLive.Visibility = Visibility.Visible;
+                    GameWindow.thirdLive.Visibility = Visibility.Visible;
+                }
+               else if (PlayerHealth == 2)
+                {
+                    GameWindow.firstLive.Visibility = Visibility.Visible;
+                    GameWindow.secondLive.Visibility = Visibility.Visible;
                     GameWindow.thirdLive.Visibility = Visibility.Hidden;
                 }
                 else if (PlayerHealth == 1)
                 {
+                    GameWindow.firstLive.Visibility = Visibility.Visible;
                     GameWindow.secondLive.Visibility = Visibility.Hidden;
                     GameWindow.thirdLive.Visibility = Visibility.Hidden;
                 }
@@ -310,7 +318,7 @@ namespace KinectGame
             canvas.Children.Clear();
             GameWindow.GameTimer.Text = "Timeout";
 
-            GameWindow.Sum_Score_Title.Content = "Score Sum: " + PlayerScore.ToString();
+            GameWindow.Sum_Score_Title.Content = "Final Score: " + PlayerScore.ToString();
             if (!dead)
             {
                 GameWindow.Sum_Life_Title.Content = "Life Left: " + PlayerHealth.ToString();
