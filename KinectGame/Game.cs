@@ -222,7 +222,8 @@ namespace KinectGame {
                 }
                 GameWindow.Health_bar.Value = PlayerHealth;
                 GameWindow.Score_Text.Text = PlayerScore.ToString();
-
+                GameWindow.Sum_Score_Title.Content = "Score Sum: " + PlayerScore.ToString();
+                GameWindow.Sum_Life_Title.Content = "Life Left: " + PlayerHealth.ToString();
                 for (int i = canvas.Children.Count - 1; i >= 0; --i)
                 {
                     if (canvas.Children[i].Uid == TouchedObj.Id)
